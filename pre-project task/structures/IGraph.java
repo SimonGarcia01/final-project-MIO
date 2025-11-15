@@ -3,12 +3,13 @@ package structures;
 import java.util.List;
 
 import exceptions.GraphException;
+import model.Stop;
 
-public interface IGraph<V> {
-    void add(V value);
-    void addEdge(V startValue, V endValue, double weight) throws GraphException;
-    void removeVertex(V value) throws GraphException;
-    void removeEdge(V startValue, V endValue) throws GraphException;
+public interface IGraph<Stop> {
+    void add(Stop value);
+    void addEdge(String Stop1Id, String Stop2Id, double weight) throws GraphException;
+    void removeVertex(String StopId) throws GraphException;
+    void removeEdge(String Stop1Id, String Stop2Id) throws GraphException;
     void printMatrix();
-    public List<Vertex<V>> getVertices();
+    public List<Stop> getVertices();
 }

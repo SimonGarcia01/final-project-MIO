@@ -1,16 +1,18 @@
 package structures;
 
+import model.Stop;
+
 import java.util.*;
 
 import exceptions.GraphException;
 
 
-public class MatrixGraph<V> implements IGraph<V> {
+public class MatrixGraph implements IGraph<Stop> {
 
     private static final double NO_EDGE = Double.POSITIVE_INFINITY;
 
     //Attributes
-    private final List<Vertex<V>> vertices;
+    private final List<Stop> vertices;
     private double[][] matrix;
     private final int maxSize;
     
@@ -26,18 +28,18 @@ public class MatrixGraph<V> implements IGraph<V> {
 
     //Add a vertex
     @Override
-    public void add(V value) {
+    public void add(Stop value) {
         if (vertices.size() >= maxSize)
             throw new IllegalStateException("Max graph size reached.");
 
-        vertices.add(new Vertex<>(value));
+        vertices.add(value);
     }
 
     //Add an edge between two vertices
     @Override
-    public void addEdge(V startValue, V endValue, double weight) throws GraphException {
-        int i = indexOf(startValue);
-        int j = indexOf(endValue);
+    public void addEdge(String Stop1Id, String Stop2Id, double weight) throws GraphException {
+        int i = findStopIndexById(Stop1Id);
+        int j = findStopIndexById(Stop2Id);
 
         if (i == j)
             throw new GraphException("Self-loops are not allowed.");
@@ -50,9 +52,9 @@ public class MatrixGraph<V> implements IGraph<V> {
 
     //Remove an edge between two vertices
     @Override
-    public void removeEdge(V startValue, V endValue) throws GraphException {
-        int i = indexOf(startValue);
-        int j = indexOf(endValue);
+    public void removeEdge(String Stop1Id, String Stop2Id) throws GraphException {
+        int i = findStopIndexById(Stop1Id);
+        int j = findStopIndexById(Stop2Id);
 
         if (matrix[i][j] == NO_EDGE)
             throw new GraphException("Edge does not exist.");
@@ -62,8 +64,8 @@ public class MatrixGraph<V> implements IGraph<V> {
 
     //Remove a vertex
     @Override
-    public void removeVertex(V value) throws GraphException {
-        int idx = indexOf(value);
+    public void removeVertex(String StopId) throws GraphException {
+        int idx = findStopIndexById(StopId);
 
         vertices.remove(idx);
 
@@ -96,17 +98,25 @@ public class MatrixGraph<V> implements IGraph<V> {
     }
 
     //This returns the index of the vertex with the given value
-    private int indexOf(V value) throws GraphException {
+    private int indexOf(Stop value) throws GraphException {
         for (int i = 0; i < vertices.size(); i++) {
-            if (vertices.get(i).value.equals(value))
+            if (vertices.get(i).equals(value))
                 return i;
         }
         throw new GraphException("Vertex not found: " + value);
     }
 
-    public List<Vertex<V>> getVertices() {
+    public List<Stop> getVertices() {
         return vertices;
     }
 
+    public int findStopIndexById(String id) throws GraphException {
+        for (int i = 0; i < vertices.size(); i++) {
+            if (vertices.get(i).getId().equals(id)) {
+                return i;
+            }
+        }
+        throw new GraphException("Stop with ID " + id + " not found.");
+    }
     
 }
