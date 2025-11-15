@@ -73,5 +73,7 @@ public class Task {
         }
 
         System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+
+        graph.printMatrix();
     }
 }
