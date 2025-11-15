@@ -87,6 +87,7 @@ public class MatrixGraph<V> implements IGraph<V> {
         }
     }
 
+    @Override
     public void printMatrix() {
         int n = vertices.size();
         for (int i = 0; i < n; i++) {
@@ -102,4 +103,10 @@ public class MatrixGraph<V> implements IGraph<V> {
         }
         throw new GraphException("Vertex not found: " + value);
     }
+
+    public List<Vertex<V>> getVertices() {
+        return vertices;
+    }
+
+    
 }
