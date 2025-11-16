@@ -6,9 +6,9 @@ public class Vertex {
     private String stopId;
     private double x;
     private double y;
-    private String orientation;
-    private String variant;
-    private String stopSequence;
+    private int orientation;
+    private int variant;
+    private int stopSequence;
 
     // Constructors, overloading of constructor
     public Vertex(String name, String stopId, double x, double y) {
@@ -18,7 +18,7 @@ public class Vertex {
         this.y = y;
     }
 
-    public Vertex(String name, String id, double x, double y, String lineId, String orientation, String variant, String stopSequence) {
+    public Vertex(String name, String id, double x, double y, String lineId, int orientation, int variant, int stopSequence) {
         this.name = name;
         this.lineId = lineId;
         this.stopId = id;
@@ -39,12 +39,13 @@ public class Vertex {
                 ", id='" + stopId + '\'' +
                 ", x=" + x +
                 ", y=" + y +
-                '}';
+                '}' +
+                '\n';
     }
 
     @Override
     public String toString() {
-        return "Stop: {" +
+        return "\nStop: {" +
                 "name='" + name + '\'' +
                 ", stopId='" + stopId + '\'' +
                 ", lineId='" + lineId + '\'' +
@@ -53,7 +54,8 @@ public class Vertex {
                 ", stopsequence='" + stopSequence + '\'' +
                 ", x=" + x +
                 ", y=" + y +
-                '}';
+                '}' +
+                '\n';
     }
 
 
@@ -102,27 +104,27 @@ public class Vertex {
         this.lineId = lineId;
     }
 
-    public String getOrientation() {
+    public int getOrientation() {
         return orientation;
     }
 
-    public void setOrientation(String orientation) {
+    public void setOrientation(int orientation) {
         this.orientation = orientation;
     }
 
-    public String getVariant() {
+    public int getVariant() {
         return variant;
     }
 
-    public void setVariant(String variant) {
+    public void setVariant(int variant) {
         this.variant = variant;
     }
 
-    public String getStopSequence() {
+    public int getStopSequence() {
         return stopSequence;
     }
 
-    public void setStopSequence(String stopSequence) {
+    public void setStopSequence(int stopSequence) {
         this.stopSequence = stopSequence;
     }
 

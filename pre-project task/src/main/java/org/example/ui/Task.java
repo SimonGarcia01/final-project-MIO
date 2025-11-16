@@ -8,12 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Task {
@@ -22,9 +17,9 @@ public class Task {
     private static IGraph<Vertex> graph;
     private static GraphController control = new GraphController();
     private static HashMap<String, String> stopsWithLines = new HashMap<>();
-    private static HashMap<String, String> stopsWithOrientations = new HashMap<>();
-    private static HashMap<String, String> stopsWithVariants = new HashMap<>();
-    private static HashMap<String, String> stopsWithStopSequences = new HashMap<>();
+    private static HashMap<String, Integer> stopsWithOrientations = new HashMap<>();
+    private static HashMap<String, Integer> stopsWithVariants = new HashMap<>();
+    private static HashMap<String, Integer> stopsWithStopSequences = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -40,14 +35,12 @@ public class Task {
 
         // Group by lines
         System.out.println(task.readLinesStopsAndGroup());
-        //System.out.println(graph.getVertices());
+        System.out.println(graph.getVertices());
 
         // Create and add edges
         System.out.println(task.createAndConnectEdges());
 
         //System.out.println(graph.printMatrix());
-        
-
         
     }
 
@@ -88,17 +81,17 @@ public class Task {
 
                 // Add orientation filter. Lines by orientation
                 // So, it means that is stops by line and orientation. :)
-                String orientation = parts[2].trim();
+                int orientation = Integer.parseInt(parts[2].trim());
                 stopsWithOrientations.put(stopId, orientation);
 
                 // Stops by line, orientation and variant
                 // Add another filter and order
-                String variant = parts[6].trim();
+                int variant = Integer.parseInt(parts[6].trim());
                 stopsWithVariants.put(stopId, variant);
                 
                 // Stops by line, orientation, variant and stopsequence
                 // Add another filter and order
-                String stopsequence = parts[1].trim();
+                int stopsequence = Integer.parseInt(parts[1].trim());
                 stopsWithStopSequences.put(stopId, stopsequence);
                 //System.out.println(stopsWithStopSequences);
 
@@ -166,18 +159,14 @@ public class Task {
 
                 // We create the stops. Each stop is a vertex.
                 String lineId = stopsWithLines.get(stopId);
-                String orientation = stopsWithOrientations.get(stopId);
-                String variant = stopsWithVariants.get(stopId);
-                String stopsequence = stopsWithStopSequences.get(stopId);
+                int orientation = stopsWithOrientations.get(stopId);
+                int variant = stopsWithVariants.get(stopId);
+                int stopsequence = stopsWithStopSequences.get(stopId);
                 control.createAndAddVertex(graph, name, stopId, x, y, lineId, orientation, variant, stopsequence);
                 imported++;
 
             }
 
-            // ** TEST **
-            //System.out.println(stopsWithLines);
-            //System.out.println("Imported stops: " + imported + " from " + csv.getPath());
-            //System.out.println(graph.getVertices().toString());
             return "Vertexes created successfully.";
 
         } catch (IOException e) {
@@ -228,10 +217,14 @@ public class Task {
 
             System.out.println("Imported stops: " + imported + " from " + csv.getPath());
             // Hago groupBy por ruta
-            //System.out.println("Paradas agrupadas por ruta: ");
-            graph.getVertices().stream().collect(Collectors.groupingBy(Vertex::getLineId));
-            
-
+            System.out.println("Paradas agrupadas por ruta: ");
+            List<Vertex> list = new ArrayList<>();
+            graph.getVertices().stream().sorted(Comparator.comparing(Vertex::getLineId)
+                            .thenComparing(Vertex::getOrientation)
+                            .thenComparing(Vertex::getVariant)
+                            .thenComparing(Vertex::getStopSequence))
+                            .forEach(list::add);
+            graph.setVertexes(list);
             return "Group by line ready.";
 
         } catch (IOException e) {

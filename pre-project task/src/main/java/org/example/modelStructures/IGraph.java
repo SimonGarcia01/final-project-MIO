@@ -11,5 +11,6 @@ public interface IGraph<Vertex> {
     void removeEdge(String Stop1Id, String Stop2Id) throws GraphException;
     String printMatrix();
     List<Vertex> getVertices();
+    void setVertexes(List<Vertex> vertexes);
 
 }

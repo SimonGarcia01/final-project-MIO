@@ -12,7 +12,7 @@ public class MatrixGraph implements IGraph<Vertex> {
     private static final double NO_EDGE = Double.POSITIVE_INFINITY;
 
     //Attributes
-    private final List<Vertex> vertices;
+    private List<Vertex> vertices;
     private double[][] matrix;
     private int maxSize;
     
@@ -35,6 +35,11 @@ public class MatrixGraph implements IGraph<Vertex> {
         vertices.add(value);
     }
 
+    @Override
+    public void setVertexes(List<Vertex> vertexes) {
+        this.vertices = vertexes;
+    }
+
     //Add an edge between two vertices
     @Override
     public void addEdge(String stop1Id, String stop2Id, double weight) throws GraphException {
@@ -48,7 +53,6 @@ public class MatrixGraph implements IGraph<Vertex> {
             throw new GraphException("Parallel edges are not allowed.");
 
         matrix[i][j] = weight;
-        System.out.println(matrix[i][j]);
     }
 
     //Remove an edge between two vertices
