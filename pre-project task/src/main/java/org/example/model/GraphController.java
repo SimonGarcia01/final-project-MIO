@@ -17,9 +17,9 @@ public class GraphController {
     }
 
     // We read stops.csv file
-    public void createAndAddVertex(IGraph<Stop> graph, String name, String lineId, String id, double x, double y, String orientation) {
+    public void createAndAddVertex(IGraph<Stop> graph, String name, String id, double x, double y, String lineId, String orientation, String variant) {
 
-        Stop s = new Stop(name, lineId, id, x, y, orientation);
+        Stop s = new Stop(name, id, x, y, lineId, orientation, variant);
         graph.add(s);
 
     }

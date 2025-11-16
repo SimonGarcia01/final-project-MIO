@@ -23,6 +23,7 @@ public class Task {
     private static GraphController control = new GraphController();
     private static HashMap<String, String> stopsWithLines = new HashMap<>();
     private static HashMap<String, String> stopsWithOrientations = new HashMap<>();
+    private static HashMap<String, String> stopsWithVariants = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -36,6 +37,7 @@ public class Task {
         // MUY IMPORTANTE, NO BORRAR. Aunque no se vea porque no tiene retorno,
         // esta creando un mapa con las paradas y sus respectivas rutas asociadas. OJO
         task.createFiltersAndOrdering();
+        System.out.println(stopsWithVariants);
         //System.out.println(stopsWithLines);
 
         // Connect edges
@@ -83,7 +85,12 @@ public class Task {
                 // So, it means that is stops by line and orientation. :)
                 String orientation = parts[2].trim();
                 stopsWithOrientations.put(lineId, orientation);
-            
+
+                // Stops by line, orientation and variant
+                // Add another filter and order
+                String variant = parts[6].trim();
+                stopsWithVariants.put(orientation, variant);
+                //System.out.println(stopsWithVariants);
 
             }
 
@@ -150,7 +157,8 @@ public class Task {
                 // We create the stops. Each stop is a vertex.
                 String lineId = stopsWithLines.get(id);
                 String orientation = stopsWithOrientations.get(lineId);
-                control.createAndAddVertex(graph, name, lineId, id, x, y, orientation);
+                String variant = stopsWithVariants.get(orientation);
+                control.createAndAddVertex(graph, name, id, x, y, lineId, orientation, variant);
                 imported++;
 
             }
@@ -210,7 +218,7 @@ public class Task {
 
             System.out.println("Imported stops: " + imported + " from " + csv.getPath());
             // Hago groupBy por ruta
-            System.out.println("Paradas agrupadas por ruta: ");
+            //System.out.println("Paradas agrupadas por ruta: ");
             graph.getVertices().stream().collect(Collectors.groupingBy(Stop::getLineId));
             System.out.println("P: " + graph.getVertices());
 
