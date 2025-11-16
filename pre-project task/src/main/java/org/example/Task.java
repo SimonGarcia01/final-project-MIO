@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.model.GraphController;
+import org.example.model.Line;
 import org.example.model.Stop;
 import org.example.structures.IGraph;
 
@@ -8,13 +9,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Task {
 
     // Attributes, global variables
     private static IGraph<Stop> graph;
     private static GraphController control = new GraphController();
+    
 
     public static void main(String[] args) {
 
@@ -25,8 +33,64 @@ public class Task {
         System.out.println(task.readStopsAndCreateVertexes());
         //System.out.println(graph.printMatrix());
 
+        var hashMap = task.createStopsWithLines();
+        System.out.println(hashMap);
+
+        // Connect edges
+        //System.out.println(task.readLinesStopsAndCreateEdges());
+
         
     }
+
+    public HashMap<String, String> createStopsWithLines() {
+
+        HashMap<String, String> stopsWithLines = new HashMap<>();
+
+        String path = "src/main/java/org/example/data/linestops-241.csv";
+        File csv = new File(path);
+
+        int imported = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
+            String line;
+            boolean firstLine = true;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty())
+                    continue;
+
+                // If first line looks like a header, skip it
+                if (firstLine) {
+                    firstLine = false;
+                    String low = line.toLowerCase();
+                    if (low.contains("stop_id") || low.contains("stopid") || low.contains("id"))
+                        continue;
+                }
+
+                // Simple CSV split (assumes stable CSV without quoted commas)
+                String[] parts = line.split(",", -1);
+                if (parts.length < 1) {
+                    // Not enough columns — skip line
+                    System.err.println("Skipping malformed line: " + line);
+                    continue;
+                }
+
+                String stopId = parts[4].trim();
+                String lineId = parts[3].trim();
+
+                stopsWithLines.put(stopId, lineId);
+
+            }
+
+        } catch (IOException e) {
+
+            System.err.println("Error reading file '" + csv.getPath() + "': " + e.getMessage());
+            e.printStackTrace();
+
+        }
+
+        return stopsWithLines;
+
+    }
+
 
     public String readStopsAndCreateVertexes() {
 
@@ -77,8 +141,9 @@ public class Task {
                 }
 
                 // We create the stops. Each stop is a vertex.
-                control.createVertex(graph, name, id, x, y);
+                control.createVertex(graph, "lineId", name, id, x, y);
                 imported++;
+                break;
 
             }
 
@@ -96,7 +161,76 @@ public class Task {
     }
 
     // This method is for connect edges
-    public void readLinesStopsAndCreateEdges() {
+    public String readLinesStopsAndCreateEdges() {
+
+        ArrayList<Line> stops1 = new ArrayList<>();
+        ArrayList<String> stops2 = new ArrayList<>();
+
+        String path = "src/main/java/org/example/data/linestops-241.csv";
+        File csv = new File(path);
+
+        int imported = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
+            String line;
+            boolean firstLine = true;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty())
+                    continue;
+
+                // If first line looks like a header, skip it
+                if (firstLine) {
+                    firstLine = false;
+                    String low = line.toLowerCase();
+                    if (low.contains("stop_sequence") || low.contains("stopsequence") || low.contains("stop_id") || low.contains("stopid"))
+                        continue;
+                }
+
+                // Simple CSV split (assumes stable CSV without quoted commas)
+                String[] parts = line.split(",", -1);
+                if (parts.length < 1) {
+                    // Not enough columns — skip line
+                    System.err.println("Skipping malformed line: " + line);
+                    continue;
+                }
+
+                int sequence = Integer.parseInt(parts[1].trim());
+                
+                // Necesito que llegue hasta la penultima. Desde la primera hasta la penultima
+                String lineId = parts[3].trim();
+                Line lineE = new Line(lineId);
+
+                String stop1Id = parts[4].trim();
+                //stops1.add(stop1Id);
+                // Necesito que esta este desde la segunda hasta la ultima
+                //stop2Id = parts[4].trim();
+                
+                // ESTO ES MUCHO MAS COMPLICADO
+                // Primero, debo separar por ruta
+                
+                System.out.println(stops1);
+                //String stop2Id = parts[4].trim();
+
+                // We create the edges. We follow the stopsequence, that show in what order bus stops in the stops (paradas).
+                //control.connectEdge(stop1Id, "stop2Id", 1);
+                imported++;
+
+            }
+
+            System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+            // Hago groupBy por ruta
+            //Map<BlogPostType, List<BlogPost>> postsPerType = posts.stream().collect(groupingBy(BlogPost::getType));
+            //stops1.stream().collect(Collectors.groupingBy(Line::getName));
+            System.out.println(stops1);
+            return "Vertexes created successfully.";
+
+        } catch (IOException e) {
+
+            System.err.println("Error reading file '" + csv.getPath() + "': " + e.getMessage());
+            e.printStackTrace();
+            return "Vertexes not created successfully.";
+
+
+        }
 
     }
 

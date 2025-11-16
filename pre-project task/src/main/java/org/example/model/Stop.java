@@ -2,6 +2,7 @@ package org.example.model;
 
 public class Stop {
     private String name;
+    private String lineId;
     private String id;
     private double x;
     private double y;
@@ -12,6 +13,17 @@ public class Stop {
         this.id = id;
         this.x = x;
         this.y = y;
+    }
+
+    public Stop(String name, String lineId, String id, double x, double y) {
+        this.name = name;
+        this.lineId = lineId;
+        this.id = id;
+        this.x = x;
+        this.y = y;
+    }
+    public Stop(String name) {
+        this.name = name;
     }
 
     @Override
@@ -63,6 +75,11 @@ public class Stop {
     public void setY(double y) {
         this.y = y;
     }
-
+    public String getLineId() {
+        return lineId;
+    }
+    public void setLineId(String lineId) {
+        this.lineId = lineId;
+    }
     
 }
