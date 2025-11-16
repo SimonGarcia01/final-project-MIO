@@ -1,4 +1,4 @@
-package org.example.structures;
+package org.example.modelStructures;
 
 
 public enum Color {

@@ -1,19 +1,18 @@
-package org.example.structures;
+package org.example.modelStructures;
 
 import org.example.exceptions.GraphException;
-import org.example.model.Stop;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class MatrixGraph implements IGraph<Stop> {
+public class MatrixGraph implements IGraph<Vertex> {
 
     private static final double NO_EDGE = Double.POSITIVE_INFINITY;
 
     //Attributes
-    private final List<Stop> vertices;
+    private final List<Vertex> vertices;
     private double[][] matrix;
     private int maxSize;
     
@@ -29,7 +28,7 @@ public class MatrixGraph implements IGraph<Stop> {
 
     //Add a vertex
     @Override
-    public void add(Stop value) {
+    public void add(Vertex value) {
         if (vertices.size() >= maxSize)
             throw new IllegalStateException("Max graph size reached.");
 
@@ -49,6 +48,7 @@ public class MatrixGraph implements IGraph<Stop> {
             throw new GraphException("Parallel edges are not allowed.");
 
         matrix[i][j] = weight;
+        System.out.println(matrix[i][j]);
     }
 
     //Remove an edge between two vertices
@@ -100,30 +100,17 @@ public class MatrixGraph implements IGraph<Stop> {
         return text.toString();
     }
 
-    //This returns the index of the vertex with the given value
-    private int indexOf(Stop value) throws GraphException {
-        for (int i = 0; i < vertices.size(); i++) {
-            if (vertices.get(i).equals(value))
-                return i;
-        }
-        throw new GraphException("Vertex not found: " + value);
-    }
-
-    public List<Stop> getVertices() {
+    public List<Vertex> getVertices() {
         return vertices;
     }
 
     public int findStopIndexById(String id) throws GraphException {
         for (int i = 0; i < vertices.size(); i++) {
-            if (vertices.get(i).getId().equals(id)) {
+            if (vertices.get(i).getStopId().equals(id)) {
                 return i;
             }
         }
         throw new GraphException("Stop with ID " + id + " not found.");
     }
 
-    public Stop findById(String id) {
-        return vertices.get(1);
-    }
-    
 }

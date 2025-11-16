@@ -1,8 +1,8 @@
-package org.example;
+package org.example.ui;
 
-import org.example.model.GraphController;
-import org.example.model.Stop;
-import org.example.structures.IGraph;
+import org.example.control.GraphController;
+import org.example.modelStructures.IGraph;
+import org.example.modelStructures.Vertex;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,15 +11,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Task {
 
     // Attributes, global variables
-    private static IGraph<Stop> graph;
+    private static IGraph<Vertex> graph;
     private static GraphController control = new GraphController();
     private static HashMap<String, String> stopsWithLines = new HashMap<>();
     private static HashMap<String, String> stopsWithOrientations = new HashMap<>();
@@ -33,14 +33,20 @@ public class Task {
         // 2111 is the size of the stops that are in linestops. There are 8 stops that are not in linestops.
         graph = control.createGraph(2111);
         System.out.println(task.readStopsAndCreateVertexes());
-        //System.out.println(graph.printMatrix());
 
         // MUY IMPORTANTE, NO BORRAR. Aunque no se vea porque no tiene retorno,
-        // esta creando un mapa con las paradas y sus respectivas rutas asociadas. OJO
+        // esta creando un mapa con todos los agrupamientos creando asi un orden compuesto. OJO
         task.createFiltersAndOrdering();
 
-        // Connect edges
-        System.out.println(task.readLinesStopsAndCreateEdges());
+        // Group by lines
+        System.out.println(task.readLinesStopsAndGroup());
+        //System.out.println(graph.getVertices());
+
+        // Create and add edges
+        System.out.println(task.createAndConnectEdges());
+
+        //System.out.println(graph.printMatrix());
+        
 
         
     }
@@ -107,7 +113,7 @@ public class Task {
 
     }
 
-
+    // This method read stops files and create vertexes
     public String readStopsAndCreateVertexes() {
 
         createFiltersAndOrdering();
@@ -168,6 +174,7 @@ public class Task {
 
             }
 
+            // ** TEST **
             //System.out.println(stopsWithLines);
             //System.out.println("Imported stops: " + imported + " from " + csv.getPath());
             //System.out.println(graph.getVertices().toString());
@@ -183,8 +190,8 @@ public class Task {
 
     }
 
-    // This method is for connect edges
-    public String readLinesStopsAndCreateEdges() {
+    // This method read linestops file and group by line
+    public String readLinesStopsAndGroup() {
 
         String path = "src/main/java/org/example/data/linestops-241.csv";
         File csv = new File(path);
@@ -214,9 +221,7 @@ public class Task {
                 }
 
                 int sequence = Integer.parseInt(parts[1].trim());
-                
 
-                //control.connectEdge(stop1Id, "stop2Id", 1);
                 imported++;
 
             }
@@ -224,24 +229,62 @@ public class Task {
             System.out.println("Imported stops: " + imported + " from " + csv.getPath());
             // Hago groupBy por ruta
             //System.out.println("Paradas agrupadas por ruta: ");
-            graph.getVertices().stream().collect(Collectors.groupingBy(Stop::getLineId));
-            System.out.println("P: " + graph.getVertices());
+            graph.getVertices().stream().collect(Collectors.groupingBy(Vertex::getLineId));
+            
 
-            // Falta o hacer mas agrupaciones
-            // O encontrar la manera de conectarlos por secuencia.
-            // ----- TRABAJO EN PROGRESO ----
-            // AVANCES SIGNIFICATIVOS, ¡GRACIAS A DIOS!
-            return "Vertexes created successfully.";
+            return "Group by line ready.";
 
         } catch (IOException e) {
 
             System.err.println("Error reading file '" + csv.getPath() + "': " + e.getMessage());
             e.printStackTrace();
-            return "Vertexes not created successfully.";
-
+            return "Group by line unsuccessfully.";
 
         }
 
+    }
+
+    // This method create and add edges to the graph
+    public String createAndConnectEdges(){
+        // We create the edge between two vertexes.
+        try {
+
+            createFiltersAndOrdering();
+
+            // No lo puedo igualar a graph.getVertices() porque sino me borra los elementos de la lista original
+            // Vertexes 1
+            var vertexes1 = new ArrayList<>(graph.getVertices());
+            vertexes1.remove(graph.getVertices().size()-1);
+
+            // Vertexes 2
+            var vertexes2 = new ArrayList<>(graph.getVertices());
+            vertexes2.remove(0);
+
+            // Iterator
+            Iterator<Vertex> itOne=vertexes1.iterator();
+            Iterator<Vertex> itTwo=vertexes2.iterator();
+
+            while(itOne.hasNext() && itTwo.hasNext()) {
+
+                Vertex vertex1 = itOne.next();
+                Vertex vertex2 = itTwo.next();
+
+                control.connectEdge(graph, vertex1.getStopId(), vertex2.getStopId(), 1);
+
+            }
+
+            //System.out.println(graph);
+
+            return "Edges created and added to the graph successfully";
+
+        } catch (Exception e) {
+
+            System.err.println("Error reading file :" + e.getMessage());
+            e.printStackTrace();
+            return "Edges created and added to the graph unsuccessfully.";
+
+        }
+        
     }
 
 }

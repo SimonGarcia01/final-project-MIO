@@ -1,8 +1,8 @@
-package org.example;
+package org.example.ui;
 
 import org.example.exceptions.GraphException;
-import org.example.model.Stop;
-import org.example.structures.MatrixGraph;
+import org.example.modelStructures.MatrixGraph;
+import org.example.modelStructures.Vertex;
 
 public class Main {
 
@@ -11,10 +11,10 @@ public class Main {
             MatrixGraph graph = new MatrixGraph(10);
 
             System.out.println("=== ADDING VERTICES ===");
-            graph.add(new Stop("A", "1", 12, 13));
-            graph.add(new Stop("B", "2", 9, 10));
-            graph.add(new Stop("C", "3", 1, 7));
-            graph.add(new Stop("D", "4", 2, 6));
+            graph.add(new Vertex("A", "1", 12, 13));
+            graph.add(new Vertex("B", "2", 9, 10));
+            graph.add(new Vertex("C", "3", 1, 7));
+            graph.add(new Vertex("D", "4", 2, 6));
             graph.printMatrix();
             System.out.println();
 
