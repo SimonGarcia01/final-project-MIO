@@ -28,7 +28,7 @@ public class Main {
 
             System.out.println("=== TRY PARALLEL EDGE (SHOULD FAIL) ===");
             try {
-                graph.addEdge("A", "B", 7.0);
+                graph.addEdge("1", "2", 7.0);
             } catch (GraphException ex) {
                 System.out.println("Caught expected error: " + ex.getMessage());
             }

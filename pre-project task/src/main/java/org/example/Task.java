@@ -13,11 +13,13 @@ import java.util.Arrays;
 public class Task {
 
     public static void main(String[] args) {
+
+        // 2111 is the size of the stops that are in linestops. There are 8 stops that are not in linestops.
         IGraph<Stop> graph = new MatrixGraph(2111);
 
         String[] nolinestops = {"4", "5", "6", "9", "10", "21", "22", "41"};
 
-        String path = args.length > 0 ? args[0] : "stops-241.csv";
+        String path = "src/main/java/org/example/data/stops-241.csv";
         File csv = new File(path);
 
         int imported = 0;
@@ -65,15 +67,20 @@ public class Task {
                 System.out.println(s);
                 graph.add(s);
                 imported++;
+
             }
 
+            System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+
         } catch (IOException e) {
+
             System.err.println("Error reading file '" + csv.getPath() + "': " + e.getMessage());
             e.printStackTrace();
+            
         }
 
-        System.out.println("Imported stops: " + imported + " from " + csv.getPath());
-
         graph.printMatrix();
+
     }
+
 }
