@@ -16,7 +16,7 @@ public class Stop {
 
     @Override
     public String toString() {
-        return "Stop{" +
+        return "Stop: {" +
                 "name='" + name + '\'' +
                 ", id='" + id + '\'' +
                 ", x=" + x +
