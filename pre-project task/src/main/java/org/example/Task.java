@@ -22,7 +22,7 @@ public class Task {
     // Attributes, global variables
     private static IGraph<Stop> graph;
     private static GraphController control = new GraphController();
-    
+    private static HashMap<String, String> stopsWithLines = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -33,8 +33,10 @@ public class Task {
         System.out.println(task.readStopsAndCreateVertexes());
         //System.out.println(graph.printMatrix());
 
-        var hashMap = task.createStopsWithLines();
-        System.out.println(hashMap);
+        // MUY IMPORTANTE, NO BORRAR. Aunque no se vea porque no tiene retorno,
+        // esta creando un mapa con las paradas y sus respectivas rutas asociadas. OJO
+        task.createStopsWithLines();
+        //System.out.println(stopsWithLines);
 
         // Connect edges
         //System.out.println(task.readLinesStopsAndCreateEdges());
@@ -42,9 +44,7 @@ public class Task {
         
     }
 
-    public HashMap<String, String> createStopsWithLines() {
-
-        HashMap<String, String> stopsWithLines = new HashMap<>();
+    public void createStopsWithLines() {
 
         String path = "src/main/java/org/example/data/linestops-241.csv";
         File csv = new File(path);
@@ -87,12 +87,12 @@ public class Task {
 
         }
 
-        return stopsWithLines;
-
     }
 
 
     public String readStopsAndCreateVertexes() {
+
+        createStopsWithLines();
 
         String[] nolinestops = {"4", "5", "6", "9", "10", "21", "22", "41"};
 
@@ -141,13 +141,15 @@ public class Task {
                 }
 
                 // We create the stops. Each stop is a vertex.
-                control.createVertex(graph, "lineId", name, id, x, y);
+                String lineId = stopsWithLines.get(id);
+                control.createAndAddVertex(graph, name, lineId, id, x, y);
                 imported++;
-                break;
 
             }
 
-            System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+            //System.out.println(stopsWithLines);
+            //System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+            System.out.println(graph.getVertices().toString());
             return "Vertexes created successfully.";
 
         } catch (IOException e) {
@@ -163,7 +165,7 @@ public class Task {
     // This method is for connect edges
     public String readLinesStopsAndCreateEdges() {
 
-        ArrayList<Line> stops1 = new ArrayList<>();
+        ArrayList<Stop> stops1 = new ArrayList<>();
         ArrayList<String> stops2 = new ArrayList<>();
 
         String path = "src/main/java/org/example/data/linestops-241.csv";

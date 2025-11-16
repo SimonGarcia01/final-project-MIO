@@ -26,10 +26,21 @@ public class Stop {
         this.name = name;
     }
 
+    //@Override
+    public String toStringE() {
+        return "Stop: {" +
+                "name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
     @Override
     public String toString() {
         return "Stop: {" +
                 "name='" + name + '\'' +
+                ", lineId='" + lineId + '\'' +
                 ", id='" + id + '\'' +
                 ", x=" + x +
                 ", y=" + y +
