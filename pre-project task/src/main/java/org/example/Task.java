@@ -3,7 +3,6 @@ package org.example;
 import org.example.model.GraphController;
 import org.example.model.Stop;
 import org.example.structures.IGraph;
-import org.example.structures.MatrixGraph;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,12 +12,23 @@ import java.util.Arrays;
 
 public class Task {
 
+    // Attributes, global variables
+    private static IGraph<Stop> graph;
+    private static GraphController control = new GraphController();
+
     public static void main(String[] args) {
 
-        GraphController control = new GraphController();
+        Task task = new Task();
 
         // 2111 is the size of the stops that are in linestops. There are 8 stops that are not in linestops.
-        IGraph<Stop> graph = control.createGraph(2111);
+        graph = control.createGraph(2111);
+        System.out.println(task.readStopsAndCreateVertexes());
+        //System.out.println(graph.printMatrix());
+
+        
+    }
+
+    public String readStopsAndCreateVertexes() {
 
         String[] nolinestops = {"4", "5", "6", "9", "10", "21", "22", "41"};
 
@@ -72,19 +82,21 @@ public class Task {
 
             }
 
-            //System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+            System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+            return "Vertexes created successfully.";
 
         } catch (IOException e) {
 
             System.err.println("Error reading file '" + csv.getPath() + "': " + e.getMessage());
             e.printStackTrace();
+            return "Vertexes not created successfully.";
 
         }
 
-        System.out.println(graph.printMatrix());
+    }
 
-        // Edges:
-        System.out.println(control.connectEdges());
+    // This method is for connect edges
+    public void readLinesStopsAndCreateEdges() {
 
     }
 
