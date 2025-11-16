@@ -48,13 +48,13 @@ public class Stop {
     public String toString() {
         return "Stop: {" +
                 "name='" + name + '\'' +
-                ", id='" + id + '\'' +
-                ", x=" + x +
-                ", y=" + y +
+                ", stopId='" + id + '\'' +
                 ", lineId='" + lineId + '\'' +
                 ", orientation='" + orientation + '\'' +
                 ", variant='" + variant + '\'' +
-                ", stopsequence='" + variant + '\'' +
+                ", stopsequence='" + stopSequence + '\'' +
+                ", x=" + x +
+                ", y=" + y +
                 '}';
     }
 

@@ -38,8 +38,6 @@ public class Task {
         // MUY IMPORTANTE, NO BORRAR. Aunque no se vea porque no tiene retorno,
         // esta creando un mapa con las paradas y sus respectivas rutas asociadas. OJO
         task.createFiltersAndOrdering();
-        System.out.println(stopsWithVariants);
-        //System.out.println(stopsWithLines);
 
         // Connect edges
         System.out.println(task.readLinesStopsAndCreateEdges());
@@ -85,17 +83,18 @@ public class Task {
                 // Add orientation filter. Lines by orientation
                 // So, it means that is stops by line and orientation. :)
                 String orientation = parts[2].trim();
-                stopsWithOrientations.put(lineId, orientation);
+                stopsWithOrientations.put(stopId, orientation);
 
                 // Stops by line, orientation and variant
                 // Add another filter and order
                 String variant = parts[6].trim();
-                stopsWithVariants.put(orientation, variant);
+                stopsWithVariants.put(stopId, variant);
                 
                 // Stops by line, orientation, variant and stopsequence
                 // Add another filter and order
                 String stopsequence = parts[1].trim();
-                stopsWithVariants.put(variant, stopsequence);
+                stopsWithStopSequences.put(stopId, stopsequence);
+                //System.out.println(stopsWithStopSequences);
 
             }
 
@@ -142,9 +141,9 @@ public class Task {
                     continue;
                 }
 
-                String id = parts[0].trim();
+                String stopId = parts[0].trim();
 
-                if(Arrays.asList(nolinestops).contains(id)) {
+                if(Arrays.asList(nolinestops).contains(stopId)) {
                     continue;
                 }
 
@@ -160,11 +159,11 @@ public class Task {
                 }
 
                 // We create the stops. Each stop is a vertex.
-                String lineId = stopsWithLines.get(id);
-                String orientation = stopsWithOrientations.get(lineId);
-                String variant = stopsWithVariants.get(orientation);
-                String stopsequence = stopsWithStopSequences.get(variant);
-                control.createAndAddVertex(graph, name, id, x, y, lineId, orientation, variant, stopsequence);
+                String lineId = stopsWithLines.get(stopId);
+                String orientation = stopsWithOrientations.get(stopId);
+                String variant = stopsWithVariants.get(stopId);
+                String stopsequence = stopsWithStopSequences.get(stopId);
+                control.createAndAddVertex(graph, name, stopId, x, y, lineId, orientation, variant, stopsequence);
                 imported++;
 
             }
