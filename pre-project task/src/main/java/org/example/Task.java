@@ -1,7 +1,6 @@
 package org.example;
 
 import org.example.model.GraphController;
-import org.example.model.Line;
 import org.example.model.Stop;
 import org.example.structures.IGraph;
 
@@ -165,9 +164,6 @@ public class Task {
     // This method is for connect edges
     public String readLinesStopsAndCreateEdges() {
 
-        ArrayList<Stop> stops1 = new ArrayList<>();
-        ArrayList<String> stops2 = new ArrayList<>();
-
         String path = "src/main/java/org/example/data/linestops-241.csv";
         File csv = new File(path);
 
@@ -197,33 +193,15 @@ public class Task {
 
                 int sequence = Integer.parseInt(parts[1].trim());
                 
-                // Necesito que llegue hasta la penultima. Desde la primera hasta la penultima
-                //String lineId = parts[3].trim();
-                //Line lineE = new Line(lineId);
 
-                String stop1Id = parts[4].trim();
-                Stop stop = control.createVertex(stop1Id);
-                stops1.add(stop);
-                // Necesito que esta este desde la segunda hasta la ultima
-                //stop2Id = parts[4].trim();
-                
-                // ESTO ES MUCHO MAS COMPLICADO
-                // Primero, debo separar por ruta
-                
-
-                //String stop2Id = parts[4].trim();
-
-                // We create the edges. We follow the stopsequence, that show in what order bus stops in the stops (paradas).
                 //control.connectEdge(stop1Id, "stop2Id", 1);
                 imported++;
 
             }
 
             System.out.println("Imported stops: " + imported + " from " + csv.getPath());
-            //System.out.println("S: " + stops1);
             // Hago groupBy por ruta
             Map<String, List<Stop>> stopsByLine = graph.getVertices().stream().collect(Collectors.groupingBy(Stop::getLineId));
-            //stops1.stream().collect(Collectors.groupingBy(Stop::getLineId));
             System.out.println("P: " + stopsByLine);
             return "Vertexes created successfully.";
 
