@@ -1,7 +1,7 @@
 package org.example.structures;
 
-import exceptions.GraphException;
-import model.Stop;
+import org.example.exceptions.GraphException;
+import org.example.model.Stop;
 
 import java.util.ArrayList;
 import java.util.Arrays;

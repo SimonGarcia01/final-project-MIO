@@ -1,8 +1,8 @@
 package org.example;
 
-import model.Stop;
-import structures.IGraph;
-import structures.MatrixGraph;
+import org.example.model.Stop;
+import org.example.structures.IGraph;
+import org.example.structures.MatrixGraph;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class Task {
 
     public static void main(String[] args) {
-        IGraph<Stop> graph = new MatrixGraph<>(2111);
+        IGraph<Stop> graph = new MatrixGraph(2111);
 
         String[] nolinestops = {"4", "5", "6", "9", "10", "21", "22", "41"};
 

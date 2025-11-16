@@ -1,6 +1,6 @@
 package org.example.structures;
 
-import exceptions.GraphException;
+import org.example.exceptions.GraphException;
 
 import java.util.List;
 

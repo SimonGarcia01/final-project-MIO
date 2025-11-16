@@ -1,27 +1,28 @@
 package org.example;
 
-import exceptions.GraphException;
-import structures.MatrixGraph;
+import org.example.exceptions.GraphException;
+import org.example.model.Stop;
+import org.example.structures.MatrixGraph;
 
 public class Main {
 
     public static void main(String[] args) {
         try {
-            MatrixGraph<String> graph = new MatrixGraph<>(10);
+            MatrixGraph graph = new MatrixGraph(10);
 
             System.out.println("=== ADDING VERTICES ===");
-            graph.add("A");
-            graph.add("B");
-            graph.add("C");
-            graph.add("D");
+            graph.add(new Stop("A", "1", 12, 13));
+            graph.add(new Stop("B", "2", 9, 10));
+            graph.add(new Stop("C", "3", 1, 7));
+            graph.add(new Stop("D", "4", 2, 6));
             graph.printMatrix();
             System.out.println();
 
             System.out.println("=== ADDING EDGES ===");
-            graph.addEdge("A", "B", 5.0);
-            graph.addEdge("A", "C", 2.0);
-            graph.addEdge("B", "D", 1.5);
-            graph.addEdge("C", "D", 3.2);
+            graph.addEdge("1", "2", 5.0);
+            graph.addEdge("1", "3", 2.0);
+            graph.addEdge("2", "4", 1.5);
+            graph.addEdge("3", "4", 3.2);
             graph.printMatrix();
             System.out.println();
 
@@ -34,22 +35,22 @@ public class Main {
             System.out.println();
 
             System.out.println("=== REMOVE EDGE A->C ===");
-            graph.removeEdge("A", "C");
+            graph.removeEdge("1", "3");
             graph.printMatrix();
             System.out.println();
 
             System.out.println("=== REMOVE VERTEX B (COMPACTION WILL HAPPEN) ===");
-            graph.removeVertex("B");
+            graph.removeVertex("2");
             graph.printMatrix();
             System.out.println();
 
             System.out.println("=== ADD MORE EDGES AFTER COMPACTION ===");
-            graph.addEdge("A", "D", 9.9);
+            graph.addEdge("1", "4", 9.9);
             graph.printMatrix();
             System.out.println();
 
             System.out.println("=== REMOVE VERTEX A (HEAD OF MATRIX) ===");
-            graph.removeVertex("A");
+            graph.removeVertex("1");
             graph.printMatrix();
             System.out.println();
 
