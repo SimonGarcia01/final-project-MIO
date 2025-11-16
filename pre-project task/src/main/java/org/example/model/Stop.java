@@ -22,8 +22,8 @@ public class Stop {
         this.x = x;
         this.y = y;
     }
-    public Stop(String name) {
-        this.name = name;
+    public Stop(String id) {
+        this.id = id;
     }
 
     //@Override

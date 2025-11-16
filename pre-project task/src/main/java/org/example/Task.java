@@ -39,7 +39,7 @@ public class Task {
         //System.out.println(stopsWithLines);
 
         // Connect edges
-        //System.out.println(task.readLinesStopsAndCreateEdges());
+        System.out.println(task.readLinesStopsAndCreateEdges());
 
         
     }
@@ -149,7 +149,7 @@ public class Task {
 
             //System.out.println(stopsWithLines);
             //System.out.println("Imported stops: " + imported + " from " + csv.getPath());
-            System.out.println(graph.getVertices().toString());
+            //System.out.println(graph.getVertices().toString());
             return "Vertexes created successfully.";
 
         } catch (IOException e) {
@@ -198,18 +198,19 @@ public class Task {
                 int sequence = Integer.parseInt(parts[1].trim());
                 
                 // Necesito que llegue hasta la penultima. Desde la primera hasta la penultima
-                String lineId = parts[3].trim();
-                Line lineE = new Line(lineId);
+                //String lineId = parts[3].trim();
+                //Line lineE = new Line(lineId);
 
                 String stop1Id = parts[4].trim();
-                //stops1.add(stop1Id);
+                Stop stop = control.createVertex(stop1Id);
+                stops1.add(stop);
                 // Necesito que esta este desde la segunda hasta la ultima
                 //stop2Id = parts[4].trim();
                 
                 // ESTO ES MUCHO MAS COMPLICADO
                 // Primero, debo separar por ruta
                 
-                System.out.println(stops1);
+
                 //String stop2Id = parts[4].trim();
 
                 // We create the edges. We follow the stopsequence, that show in what order bus stops in the stops (paradas).
@@ -219,10 +220,11 @@ public class Task {
             }
 
             System.out.println("Imported stops: " + imported + " from " + csv.getPath());
+            //System.out.println("S: " + stops1);
             // Hago groupBy por ruta
-            //Map<BlogPostType, List<BlogPost>> postsPerType = posts.stream().collect(groupingBy(BlogPost::getType));
-            //stops1.stream().collect(Collectors.groupingBy(Line::getName));
-            System.out.println(stops1);
+            Map<String, List<Stop>> stopsByLine = graph.getVertices().stream().collect(Collectors.groupingBy(Stop::getLineId));
+            //stops1.stream().collect(Collectors.groupingBy(Stop::getLineId));
+            System.out.println("P: " + stopsByLine);
             return "Vertexes created successfully.";
 
         } catch (IOException e) {

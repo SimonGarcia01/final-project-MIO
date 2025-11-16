@@ -121,5 +121,9 @@ public class MatrixGraph implements IGraph<Stop> {
         }
         throw new GraphException("Stop with ID " + id + " not found.");
     }
+
+    public Stop findById(String id) {
+        return vertices.get(1);
+    }
     
 }
