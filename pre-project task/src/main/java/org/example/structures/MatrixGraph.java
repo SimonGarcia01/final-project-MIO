@@ -15,7 +15,7 @@ public class MatrixGraph implements IGraph<Stop> {
     //Attributes
     private final List<Stop> vertices;
     private double[][] matrix;
-    private final int maxSize;
+    private int maxSize;
     
     //Constructor
     public MatrixGraph(int maxSize) {
@@ -38,9 +38,9 @@ public class MatrixGraph implements IGraph<Stop> {
 
     //Add an edge between two vertices
     @Override
-    public void addEdge(String Stop1Id, String Stop2Id, double weight) throws GraphException {
-        int i = findStopIndexById(Stop1Id);
-        int j = findStopIndexById(Stop2Id);
+    public void addEdge(String stop1Id, String stop2Id, double weight) throws GraphException {
+        int i = findStopIndexById(stop1Id);
+        int j = findStopIndexById(stop2Id);
 
         if (i == j)
             throw new GraphException("Self-loops are not allowed.");
@@ -91,11 +91,13 @@ public class MatrixGraph implements IGraph<Stop> {
     }
 
     @Override
-    public void printMatrix() {
+    public String printMatrix() {
+        StringBuilder text = new StringBuilder();
         int n = vertices.size();
         for (int i = 0; i < n; i++) {
-            System.out.println(Arrays.toString(Arrays.copyOf(matrix[i], n)));
+            text.append(Arrays.toString(Arrays.copyOf(matrix[i], n)));
         }
+        return text.toString();
     }
 
     //This returns the index of the vertex with the given value
