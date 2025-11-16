@@ -6,6 +6,7 @@ public class Stop {
     private String id;
     private double x;
     private double y;
+    private String orientation;
 
     
     public Stop(String name, String id, double x, double y) {
@@ -15,12 +16,13 @@ public class Stop {
         this.y = y;
     }
 
-    public Stop(String name, String lineId, String id, double x, double y) {
+    public Stop(String name, String lineId, String id, double x, double y, String orientation) {
         this.name = name;
         this.lineId = lineId;
         this.id = id;
         this.x = x;
         this.y = y;
+        this.orientation = orientation;
     }
     public Stop(String id) {
         this.id = id;
@@ -41,6 +43,7 @@ public class Stop {
         return "Stop: {" +
                 "name='" + name + '\'' +
                 ", lineId='" + lineId + '\'' +
+                ", orientation='" + orientation + '\'' +
                 ", id='" + id + '\'' +
                 ", x=" + x +
                 ", y=" + y +
@@ -92,5 +95,13 @@ public class Stop {
     public void setLineId(String lineId) {
         this.lineId = lineId;
     }
-    
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
+    }
+
 }

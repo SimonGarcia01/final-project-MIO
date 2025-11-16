@@ -22,6 +22,7 @@ public class Task {
     private static IGraph<Stop> graph;
     private static GraphController control = new GraphController();
     private static HashMap<String, String> stopsWithLines = new HashMap<>();
+    private static HashMap<String, String> stopsWithOrientations = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -34,7 +35,7 @@ public class Task {
 
         // MUY IMPORTANTE, NO BORRAR. Aunque no se vea porque no tiene retorno,
         // esta creando un mapa con las paradas y sus respectivas rutas asociadas. OJO
-        task.createStopsWithLines();
+        task.createFiltersAndOrdering();
         //System.out.println(stopsWithLines);
 
         // Connect edges
@@ -43,7 +44,7 @@ public class Task {
         
     }
 
-    public void createStopsWithLines() {
+    public void createFiltersAndOrdering() {
 
         String path = "src/main/java/org/example/data/linestops-241.csv";
         File csv = new File(path);
@@ -72,10 +73,17 @@ public class Task {
                     continue;
                 }
 
+                // Stops by line
                 String stopId = parts[4].trim();
                 String lineId = parts[3].trim();
 
                 stopsWithLines.put(stopId, lineId);
+
+                // Add orientation filter. Lines by orientation
+                // So, it means that is stops by line and orientation. :)
+                String orientation = parts[2].trim();
+                stopsWithOrientations.put(lineId, orientation);
+            
 
             }
 
@@ -91,7 +99,7 @@ public class Task {
 
     public String readStopsAndCreateVertexes() {
 
-        createStopsWithLines();
+        createFiltersAndOrdering();
 
         String[] nolinestops = {"4", "5", "6", "9", "10", "21", "22", "41"};
 
@@ -141,7 +149,8 @@ public class Task {
 
                 // We create the stops. Each stop is a vertex.
                 String lineId = stopsWithLines.get(id);
-                control.createAndAddVertex(graph, name, lineId, id, x, y);
+                String orientation = stopsWithOrientations.get(lineId);
+                control.createAndAddVertex(graph, name, lineId, id, x, y, orientation);
                 imported++;
 
             }
@@ -201,8 +210,14 @@ public class Task {
 
             System.out.println("Imported stops: " + imported + " from " + csv.getPath());
             // Hago groupBy por ruta
-            Map<String, List<Stop>> stopsByLine = graph.getVertices().stream().collect(Collectors.groupingBy(Stop::getLineId));
-            System.out.println("P: " + stopsByLine);
+            System.out.println("Paradas agrupadas por ruta: ");
+            graph.getVertices().stream().collect(Collectors.groupingBy(Stop::getLineId));
+            System.out.println("P: " + graph.getVertices());
+
+            // Falta o hacer mas agrupaciones
+            // O encontrar la manera de conectarlos por secuencia.
+            // ----- TRABAJO EN PROGRESO ----
+            // AVANCES SIGNIFICATIVOS, ¡GRACIAS A DIOS!
             return "Vertexes created successfully.";
 
         } catch (IOException e) {
