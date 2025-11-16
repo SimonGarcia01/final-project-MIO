@@ -24,6 +24,7 @@ public class Task {
     private static HashMap<String, String> stopsWithLines = new HashMap<>();
     private static HashMap<String, String> stopsWithOrientations = new HashMap<>();
     private static HashMap<String, String> stopsWithVariants = new HashMap<>();
+    private static HashMap<String, String> stopsWithStopSequences = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -90,7 +91,11 @@ public class Task {
                 // Add another filter and order
                 String variant = parts[6].trim();
                 stopsWithVariants.put(orientation, variant);
-                //System.out.println(stopsWithVariants);
+                
+                // Stops by line, orientation, variant and stopsequence
+                // Add another filter and order
+                String stopsequence = parts[1].trim();
+                stopsWithVariants.put(variant, stopsequence);
 
             }
 
@@ -158,7 +163,8 @@ public class Task {
                 String lineId = stopsWithLines.get(id);
                 String orientation = stopsWithOrientations.get(lineId);
                 String variant = stopsWithVariants.get(orientation);
-                control.createAndAddVertex(graph, name, id, x, y, lineId, orientation, variant);
+                String stopsequence = stopsWithStopSequences.get(variant);
+                control.createAndAddVertex(graph, name, id, x, y, lineId, orientation, variant, stopsequence);
                 imported++;
 
             }

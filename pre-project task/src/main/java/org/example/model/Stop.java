@@ -8,6 +8,7 @@ public class Stop {
     private double y;
     private String orientation;
     private String variant;
+    private String stopSequence;
 
     // PENSAR SI ES MEJOR RELACIONARLO CON LINE line;
 
@@ -19,7 +20,7 @@ public class Stop {
         this.y = y;
     }
 
-    public Stop(String name, String id, double x, double y, String lineId, String orientation, String variant) {
+    public Stop(String name, String id, double x, double y, String lineId, String orientation, String variant, String stopSequence) {
         this.name = name;
         this.lineId = lineId;
         this.id = id;
@@ -27,6 +28,7 @@ public class Stop {
         this.y = y;
         this.orientation = orientation;
         this.variant = variant;
+        this.stopSequence = stopSequence;
     }
     public Stop(String id) {
         this.id = id;
@@ -52,6 +54,7 @@ public class Stop {
                 ", lineId='" + lineId + '\'' +
                 ", orientation='" + orientation + '\'' +
                 ", variant='" + variant + '\'' +
+                ", stopsequence='" + variant + '\'' +
                 '}';
     }
 
@@ -115,6 +118,14 @@ public class Stop {
 
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+
+    public String getStopSequence() {
+        return stopSequence;
+    }
+
+    public void setStopSequence(String stopSequence) {
+        this.stopSequence = stopSequence;
     }
 
 }
