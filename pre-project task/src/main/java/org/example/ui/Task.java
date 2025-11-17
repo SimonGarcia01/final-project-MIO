@@ -47,7 +47,7 @@ public class Task {
         int option;
 
         do {
-            System.out.println("*** BIENVENIDO A NUESTRO GRAFO ***\n");
+            System.out.println("\n*** BIENVENIDO A NUESTRO GRAFO ***\n");
             System.out.println("-- Menu --\n");
             System.out.println("1. Mostrar lista de paradas ordenadas por ruta, orientación, variante y stopsequence.");
             System.out.println("2. Mostrar matriz de pesos del grafo (por ahora, donde hay una relación se pone 1 y donde no 0). Matriz muy grande, utilizar buscador de consola para encontrar 1.0's");
