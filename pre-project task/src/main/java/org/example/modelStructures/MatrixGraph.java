@@ -23,7 +23,7 @@ public class MatrixGraph implements IGraph<Vertex> {
         this.matrix = new double[maxSize][maxSize];
 
         for (int i = 0; i < maxSize; i++)
-            Arrays.fill(matrix[i], NO_EDGE);
+            Arrays.fill(matrix[i], 0.0);
     }
 
     //Add a vertex
@@ -49,7 +49,7 @@ public class MatrixGraph implements IGraph<Vertex> {
         if (i == j)
             throw new GraphException("Self-loops are not allowed.");
 
-        if (matrix[i][j] != NO_EDGE)
+        if (matrix[i][j] != 0.0)
             throw new GraphException("Parallel edges are not allowed.");
 
         matrix[i][j] = weight;
@@ -61,10 +61,10 @@ public class MatrixGraph implements IGraph<Vertex> {
         int i = findStopIndexById(Stop1Id);
         int j = findStopIndexById(Stop2Id);
 
-        if (matrix[i][j] == NO_EDGE)
+        if (matrix[i][j] == 0.0)
             throw new GraphException("Edge does not exist.");
 
-        matrix[i][j] = NO_EDGE;
+        matrix[i][j] = 0.0;
     }
 
     //Remove a vertex
@@ -89,8 +89,8 @@ public class MatrixGraph implements IGraph<Vertex> {
         // Cleanup last row and column
         int n = vertices.size();
         for (int i = 0; i < maxSize; i++) {
-            matrix[n][i] = NO_EDGE;
-            matrix[i][n] = NO_EDGE;
+            matrix[n][i] = 0.0;
+            matrix[i][n] = 0.0;
         }
     }
 

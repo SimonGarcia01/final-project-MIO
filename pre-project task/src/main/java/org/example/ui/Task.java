@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Task {
 
@@ -21,6 +20,9 @@ public class Task {
     private static HashMap<String, Integer> stopsWithVariants = new HashMap<>();
     private static HashMap<String, Integer> stopsWithStopSequences = new HashMap<>();
 
+    // Scanner
+    private static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
 
         Task task = new Task();
@@ -31,25 +33,54 @@ public class Task {
 
         // MUY IMPORTANTE, NO BORRAR. Aunque no se vea porque no tiene retorno,
         // esta creando un mapa con todos los agrupamientos creando asi un orden compuesto. OJO
-        task.createFiltersAndOrdering();
+        task.createMaps();
 
         // Group by lines
-        System.out.println(task.readLinesStopsAndGroup());
-        System.out.println(graph.getVertices());
+        System.out.println(task.sortByConditions());
+
 
         // Create and add edges
         System.out.println(task.createAndConnectEdges());
 
-        //System.out.println(graph.printMatrix());
-        
+        // Si quiere visualizar la visualizar
+
+        int option;
+
+        do {
+            System.out.println("*** BIENVENIDO A NUESTRO GRAFO ***\n");
+            System.out.println("-- Menu --\n");
+            System.out.println("1. Mostrar lista de paradas ordenadas por ruta, orientación, variante y stopsequence.");
+            System.out.println("2. Mostrar matriz de pesos del grafo (por ahora, donde hay una relación se pone 1 y donde no 0). Matriz muy grande, utilizar buscador de consola para encontrar 1.0's");
+            System.out.println("3. Salir.");
+
+            System.out.print("Digite su opcion: ");
+            option = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (option) {
+                case 1:
+                    System.out.println(graph.getVertices());
+                    break;
+                case 2:
+                    System.out.println(graph.printMatrix());
+                    break;
+                case 3:
+                    System.out.println("¡Chao profe! ¡Esperamos que le haya gustado nuestro avance!");
+                    break;
+                default:
+                    System.out.println("Opcion no valida. Vuelva a intentarlo.");
+                    break;
+            }
+
+        } while (option != 3);
+
     }
 
-    public void createFiltersAndOrdering() {
+    public void createMaps() {
 
-        String path = "src/main/java/org/example/data/linestops-241.csv";
+        String path = "src/main/resources/linestops-241.csv";
         File csv = new File(path);
 
-        int imported = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
             String line;
             boolean firstLine = true;
@@ -109,11 +140,11 @@ public class Task {
     // This method read stops files and create vertexes
     public String readStopsAndCreateVertexes() {
 
-        createFiltersAndOrdering();
+        createMaps();
 
         String[] nolinestops = {"4", "5", "6", "9", "10", "21", "22", "41"};
 
-        String path = "src/main/java/org/example/data/stops-241.csv";
+        String path = "src/main/resources/stops-241.csv";
         File csv = new File(path);
 
         int imported = 0;
@@ -180,44 +211,9 @@ public class Task {
     }
 
     // This method read linestops file and group by line
-    public String readLinesStopsAndGroup() {
+    public String sortByConditions() {
 
-        String path = "src/main/java/org/example/data/linestops-241.csv";
-        File csv = new File(path);
-
-        int imported = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
-            String line;
-            boolean firstLine = true;
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty())
-                    continue;
-
-                // If first line looks like a header, skip it
-                if (firstLine) {
-                    firstLine = false;
-                    String low = line.toLowerCase();
-                    if (low.contains("stop_sequence") || low.contains("stopsequence") || low.contains("stop_id") || low.contains("stopid"))
-                        continue;
-                }
-
-                // Simple CSV split (assumes stable CSV without quoted commas)
-                String[] parts = line.split(",", -1);
-                if (parts.length < 1) {
-                    // Not enough columns — skip line
-                    System.err.println("Skipping malformed line: " + line);
-                    continue;
-                }
-
-                int sequence = Integer.parseInt(parts[1].trim());
-
-                imported++;
-
-            }
-
-            System.out.println("Imported stops: " + imported + " from " + csv.getPath());
             // Hago groupBy por ruta
-            System.out.println("Paradas agrupadas por ruta: ");
             List<Vertex> list = new ArrayList<>();
             graph.getVertices().stream().sorted(Comparator.comparing(Vertex::getLineId)
                             .thenComparing(Vertex::getOrientation)
@@ -225,15 +221,7 @@ public class Task {
                             .thenComparing(Vertex::getStopSequence))
                             .forEach(list::add);
             graph.setVertexes(list);
-            return "Group by line ready.";
-
-        } catch (IOException e) {
-
-            System.err.println("Error reading file '" + csv.getPath() + "': " + e.getMessage());
-            e.printStackTrace();
-            return "Group by line unsuccessfully.";
-
-        }
+            return "Vertexes sorted ready.";
 
     }
 
@@ -242,7 +230,8 @@ public class Task {
         // We create the edge between two vertexes.
         try {
 
-            createFiltersAndOrdering();
+            createMaps();
+            //sortByConditions();
 
             // No lo puedo igualar a graph.getVertices() porque sino me borra los elementos de la lista original
             // Vertexes 1
@@ -265,8 +254,6 @@ public class Task {
                 control.connectEdge(graph, vertex1.getStopId(), vertex2.getStopId(), 1);
 
             }
-
-            //System.out.println(graph);
 
             return "Edges created and added to the graph successfully";
 
