@@ -6,11 +6,17 @@ import Demo.ConnectionPrx;
 
 public class Client {
     public static void main(String[] args) {
-        try(Communicator communicator = Util.initialize(args)){
+        try(Communicator communicator = Util.initialize(args, "client.config")){
             //First I'll connect to the server connection
+
             ConnectionPrx serverConnection = ConnectionPrx.checkedCast(
-                    communicator.stringToProxy("serverconnection:default -h localhost -p 1090")
+                    communicator.propertyToProxy("serverconnection.Proxy")
             );
+
+            //Original configuration with no config file
+//            ConnectionPrx serverConnection = ConnectionPrx.checkedCast(
+//                    communicator.stringToProxy("serverconnection:default -h localhost -p 1090")
+//            );
 
             if(serverConnection==null){
                 throw new Error("No server connection!");
@@ -19,13 +25,15 @@ public class Client {
             System.out.println("Connected to server!");
 
             //Now I'll make the adapter for the notification
-            //This adapter doesn't need the endpoint because of the server connection
+            //This adapter doesn't technically need the endpoint because of the server connection
             //Was already established
-            //Left the string empty so no additional config is needed
-            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints(
-                    "ObserverAdapter",
-                    "default -h localhost -p 1091"
-            );
+
+            ObjectAdapter adapter = communicator.createObjectAdapter("ObserverAdapter");
+            //Original configuration without config file
+//            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints(
+//                    "ObserverAdapter",
+//                    "default -h localhost -p 1091"
+//            );
 
             //Make the observer
             ObserverImpl observer = new ObserverImpl();

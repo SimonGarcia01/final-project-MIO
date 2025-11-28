@@ -5,11 +5,13 @@ import com.zeroc.Ice.Util;
 public class Server {
     public static void main(String[] args) {
 
-        try(Communicator communicator = Util.initialize(args)){
-            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints(
-                    "ConnectionAdapter",
-                    "default -h localhost -p 1090"
-            );
+        try(Communicator communicator = Util.initialize(args, "server.config")){
+            ObjectAdapter adapter = communicator.createObjectAdapter("ConnectionAdapter");
+            //This was the original without config
+//            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints(
+//                    "ConnectionAdapter",
+//                    "default -h localhost -p 1090"
+//            );
 
             ConnectionImpl serverConnection = new ConnectionImpl();
 
