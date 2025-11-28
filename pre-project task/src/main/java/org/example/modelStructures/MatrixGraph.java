@@ -4,15 +4,20 @@ import org.example.exceptions.GraphException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class MatrixGraph implements IGraph<Vertex> {
 
     private static final double NO_EDGE = Double.POSITIVE_INFINITY;
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
     //Attributes
     private List<Vertex> vertices;
+    private List<String> edges;
     private double[][] matrix;
     private int maxSize;
     
@@ -20,6 +25,7 @@ public class MatrixGraph implements IGraph<Vertex> {
     public MatrixGraph(int maxSize) {
         this.maxSize = maxSize;
         this.vertices = new ArrayList<>();
+        this.edges = new ArrayList<>();
         this.matrix = new double[maxSize][maxSize];
 
         for (int i = 0; i < maxSize; i++)
@@ -40,19 +46,48 @@ public class MatrixGraph implements IGraph<Vertex> {
         this.vertices = vertexes;
     }
 
+    @Override
+    public List<String> getEdges() {
+        return edges;
+    }
+
+
+    // Auxiliar method, returns true if are distinct and false if they aren't
+    public boolean distinctValidation(String line1, String line2) {
+
+        if(!line1.equals(line2)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
     //Add an edge between two vertices
     @Override
-    public void addEdge(String stop1Id, String stop2Id, double weight) throws GraphException {
+    public void addEdge(String lineId, String stop1Id, String stop2Id, double weight) throws GraphException {
         int i = findStopIndexById(stop1Id);
+        //System.out.println(i);
         int j = findStopIndexById(stop2Id);
 
+        /*
         if (i == j)
             throw new GraphException("Self-loops are not allowed.");
-
+        */
+        /*
         if (matrix[i][j] != 0.0)
             throw new GraphException("Parallel edges are not allowed.");
+         */
 
+        // ESTO NO LO ESTA HACIENDO BIEN. OJO
         matrix[i][j] = weight;
+
+        String infoEdge = "\n Id de ruta: " + lineId;
+        infoEdge += ", Origen: " + stop1Id;
+        infoEdge += ", Destino: " + stop2Id;
+        infoEdge += ", Peso: " + weight + ";\n";
+        edges.add(infoEdge);
     }
 
     //Remove an edge between two vertices
@@ -100,6 +135,7 @@ public class MatrixGraph implements IGraph<Vertex> {
         int n = vertices.size();
         for (int i = 0; i < n; i++) {
             text.append(Arrays.toString(Arrays.copyOf(matrix[i], n)));
+            text.append("\n");
         }
         return text.toString();
     }
