@@ -1,14 +1,15 @@
+/*
 package org.example.ui;
 
 import org.example.exceptions.GraphException;
-import org.example.modelStructures.MatrixGraph;
+import org.example.modelStructures.GraphImpl;
 import org.example.modelStructures.Vertex;
 
 public class Main {
 
     public static void main(String[] args) {
         try {
-            MatrixGraph graph = new MatrixGraph(10);
+            GraphImpl graph = new GraphImpl(10);
 
             System.out.println("=== ADDING VERTICES ===");
             graph.add(new Vertex("A", "1", 12, 13));
@@ -63,3 +64,5 @@ public class Main {
         }
     }
 }
+
+ */

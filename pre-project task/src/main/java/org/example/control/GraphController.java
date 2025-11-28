@@ -2,7 +2,7 @@ package org.example.control;
 
 import org.example.exceptions.GraphException;
 import org.example.modelStructures.IGraph;
-import org.example.modelStructures.MatrixGraph;
+import org.example.modelStructures.GraphImpl;
 import org.example.modelStructures.Vertex;
 
 public class GraphController {
@@ -14,7 +14,7 @@ public class GraphController {
 
     // Create graph
     public IGraph<Vertex> createGraph(int maxSize) {
-        IGraph<Vertex> graph = new MatrixGraph(maxSize);
+        IGraph<Vertex> graph = new GraphImpl(maxSize);
         return graph;
     }
 
@@ -41,8 +41,8 @@ public class GraphController {
     }
 
     // We connect edges between vertexes
-    public void connectEdge(IGraph<Vertex> graph, String lineId, String stop1Id, String stop2Id, double weight) throws GraphException {
-        graph.addEdge(lineId, stop1Id, stop2Id, weight);
+    public void connectEdge(IGraph<Vertex> graph, String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
+        graph.addEdge(lineId, stop1Id, stop2Id, orientation, variant, stopSequence, weight);
     }
 
 }

@@ -2,34 +2,31 @@ package org.example.modelStructures;
 
 import org.example.exceptions.GraphException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 
-public class MatrixGraph implements IGraph<Vertex> {
+public class GraphImpl implements IGraph<Vertex> {
 
-    private static final double NO_EDGE = Double.POSITIVE_INFINITY;
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_RESET = "\u001B[0m";
 
     //Attributes
     private List<Vertex> vertices;
-    private List<String> edges;
+    private HashMap<String, List<String>> edges;
     private double[][] matrix;
     private int maxSize;
+    private List<String> infoByLine = new ArrayList<>();
+
     
     //Constructor
-    public MatrixGraph(int maxSize) {
+    public GraphImpl(int maxSize) {
         this.maxSize = maxSize;
         this.vertices = new ArrayList<>();
-        this.edges = new ArrayList<>();
+        this.edges = new HashMap<>();
+        // 0.0 is the default number for double.
         this.matrix = new double[maxSize][maxSize];
 
-        for (int i = 0; i < maxSize; i++)
-            Arrays.fill(matrix[i], 0.0);
+
     }
 
     //Add a vertex
@@ -47,26 +44,22 @@ public class MatrixGraph implements IGraph<Vertex> {
     }
 
     @Override
-    public List<String> getEdges() {
-        return edges;
-    }
+    public String getEdges() {
 
+        //return edges;
+        StringBuilder st = new StringBuilder();
+        edges.forEach((key, value) -> st.append("\nRuta " + ANSI_CYAN + key + ANSI_RESET + "\n" + value));
+        return String.valueOf(st);
 
-    // Auxiliar method, returns true if are distinct and false if they aren't
-    public boolean distinctValidation(String line1, String line2) {
+        // Hacer un group by porque con ciclos se va a demorar mucho
 
-        if(!line1.equals(line2)) {
-            return true;
-        }
-        else {
-            return false;
-        }
 
     }
 
     //Add an edge between two vertices
     @Override
-    public void addEdge(String lineId, String stop1Id, String stop2Id, double weight) throws GraphException {
+    public void addEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
+
         int i = findStopIndexById(stop1Id);
         //System.out.println(i);
         int j = findStopIndexById(stop2Id);
@@ -83,11 +76,36 @@ public class MatrixGraph implements IGraph<Vertex> {
         // ESTO NO LO ESTA HACIENDO BIEN. OJO
         matrix[i][j] = weight;
 
-        String infoEdge = "\n Id de ruta: " + lineId;
-        infoEdge += ", Origen: " + stop1Id;
+        // Si la key es diferente se crea una lista.
+        // Se hace una lista por key
+        if(!edges.containsKey(lineId)) {
+            infoByLine = new ArrayList<>();
+            String infoEdge = makeInfoEdge(lineId, stop1Id, stop2Id, orientation, variant, stopSequence, weight);
+            // Agrupo toda la informacion de la misma ruta
+            infoByLine.add(infoEdge);
+            edges.put(lineId, infoByLine);
+        }
+        else {
+            String infoEdge = makeInfoEdge(lineId, stop1Id, stop2Id, orientation, variant, stopSequence, weight);
+            // Agrupo toda la informacion de la misma ruta
+            infoByLine.add(infoEdge);
+            edges.put(lineId, infoByLine);
+        }
+
+    }
+
+    // Auxiliar function for avoid duplicity
+    public String makeInfoEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) {
+
+        String infoEdge = "\nOrigen: " + stop1Id;
         infoEdge += ", Destino: " + stop2Id;
+        infoEdge += ", Orientation: " + orientation;
+        infoEdge += ", Variante: " + variant;
+        infoEdge += ", StopSequence: " + stopSequence;
         infoEdge += ", Peso: " + weight + ";\n";
-        edges.add(infoEdge);
+
+        return infoEdge;
+
     }
 
     //Remove an edge between two vertices

@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.example.modelStructures.MatrixGraph.ANSI_CYAN;
-import static org.example.modelStructures.MatrixGraph.ANSI_RESET;
+import static org.example.modelStructures.GraphImpl.ANSI_CYAN;
+import static org.example.modelStructures.GraphImpl.ANSI_RESET;
 
 public class Task {
 
@@ -63,15 +63,8 @@ public class Task {
 
             switch (option) {
                 case 1:
+                    //System.out.println(graph.getVertices());
                     System.out.println(graph.getEdges());
-                    //var edges = graph.getEdges();
-                    /*
-                    edges.stream().collect(Collectors.groupingBy(String::valueOf)).forEach((k,v) -> {
-                        System.out.println("Clave: "+k+" Cantidad: "+v.size());
-                        v.forEach(System.out::println);
-                    });
-                     */
-
                     break;
                 case 2:
                     var list = graph.getVertices().stream().collect(Collectors.groupingBy(Vertex::getLineId));
@@ -253,46 +246,24 @@ public class Task {
         // We create the edge between two vertexes.
         try {
 
-            //createMaps();
-            //sortByConditions();
-
-            // No lo puedo igualar a graph.getVertices() porque sino me borra los elementos de la lista original
-            // Vertexes 1
-            var vertexes1 = new ArrayList<>(graph.getVertices());
-            vertexes1.remove(graph.getVertices().size()-1);
-
-            // Vertexes 2
-            var vertexes2 = new ArrayList<>(graph.getVertices());
-            vertexes2.remove(0);
-
-            // Iterator
-            /*
-            Iterator<Vertex> itOne=vertexes1.iterator();
-            Iterator<Vertex> itTwo=vertexes2.iterator();
-
-            while(itOne.hasNext() && itTwo.hasNext()) {
-
-                Vertex vertex1 = itOne.next();
-                Vertex vertex2 = itTwo.next();
-
-                control.connectEdge(graph, vertex1.getStopId(), vertex2.getStopId(), 1);
-
-            }
-             */
-
-
             // No recorro vertices sino linestops que son las conexiones
-            String lineId = "";
-            String stop1Id = "";
-            String stop2Id = "";
+            String lineId;
+            String stop1Id;
+            String stop2Id;
+            String orientation;
+            String variant;
+            String stopSequence;
 
             for(int i = 0; i < input.size()-1; i++) {
 
                 lineId = input.get(i)[3];
                 stop1Id = input.get(i)[4];
                 stop2Id = input.get(i+1)[4];
+                orientation = input.get(i)[2];
+                variant = input.get(i)[6];
+                stopSequence = input.get(i)[1];
 
-                control.connectEdge(graph, lineId, stop1Id, stop2Id, 1);
+                control.connectEdge(graph, lineId, stop1Id, stop2Id, orientation, variant, stopSequence, 1);
 
             }
 
