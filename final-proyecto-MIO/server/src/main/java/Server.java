@@ -15,7 +15,11 @@ public class Server {
 //                    "default -h localhost -p 1090"
 //            );
 
-            ConnectionImpl serverConnection = new ConnectionImpl();
+            CenterController centerController = new CenterController();
+
+            ConnectionImpl serverConnection = new ConnectionImpl(centerController);
+
+            centerController.setConnection(serverConnection);
 
             adapter.add(serverConnection, Util.stringToIdentity("serverconnection"));
 

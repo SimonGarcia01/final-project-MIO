@@ -35,6 +35,9 @@ module Demo {
 
         //To receive the datagrams
         void sendDatagrams(DatagramSeq datagrams);
+
+        //Send real time datagrams
+        void receiveDatagram(Datagram datagram);
     }
 
 };

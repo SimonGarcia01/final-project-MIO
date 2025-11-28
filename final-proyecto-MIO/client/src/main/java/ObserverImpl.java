@@ -19,6 +19,9 @@ public class ObserverImpl implements Observer {
         // Now call the server to get the updated graph
         String graph = serverConnection.getUpdateGraph();
 
+        //DOESN'T REACH HERE
+        System.out.println("Graph arrived");
+
         //Now call the UI to print the graph
         ui.updateMapNotif(graph);
     }

@@ -10,6 +10,12 @@ public class ConnectionImpl implements Connection {
 
     private final List<ObserverPrx> observers = new ArrayList<>();
 
+    private final CenterController centerController;
+
+    public ConnectionImpl(CenterController centerController) {
+        this.centerController = centerController;
+    }
+
     @Override
     public void subscribe(ObserverPrx observer, Current current) {
         if (!observers.contains(observer)) {
@@ -21,7 +27,7 @@ public class ConnectionImpl implements Connection {
     @Override
     public String getUpdateGraph(Current current) {
         System.out.println("Graph requested");
-        return "Graph string test";
+        return centerController.getGraph();
     }
 
     @Override
@@ -31,6 +37,13 @@ public class ConnectionImpl implements Connection {
         for (Datagram d : datagrams) {
             System.out.println("Bus " + d.busId + " stop=" + d.stopId);
         }
+    }
+
+    @Override
+    public void receiveDatagram(Datagram datagram, Current current) {
+        System.out.println("Bus " + datagram.busId + " stop=" + datagram.stopId);
+        centerController.setGraph(datagram.registerDate);
+        notifyObservers();
     }
 
     // This is to notify all the observers

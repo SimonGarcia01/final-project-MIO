@@ -11,11 +11,11 @@ public class MIO {
         try (Communicator communicator = Util.initialize(args, "MIO.config")) {
 
             // Connection to the server
-            ConnectionPrx server = ConnectionPrx.checkedCast(
+            ConnectionPrx serverconnection = ConnectionPrx.checkedCast(
                     communicator.propertyToProxy("serverconnection.Proxy")
             );
 
-            if (server == null) {
+            if (serverconnection == null) {
                 throw new Error("Proxy inválido");
             }
 
@@ -25,10 +25,13 @@ public class MIO {
             // Change the list to the Ice Datagram List
             Datagram[] array = datagrams.toArray(new Datagram[0]);
 
-            System.out.println("Enviando " + array.length + " datagramas...");
-
             //Send the datagrams
-            server.sendDatagrams(array);
+            for(Datagram datagram : array){
+                System.out.println("Enviando " + datagram.busId);
+                serverconnection.receiveDatagram(datagram);
+            }
+
+            //serverconnection.sendDatagrams(array);
 
             System.out.println("Datos enviados correctamente.");
         }
