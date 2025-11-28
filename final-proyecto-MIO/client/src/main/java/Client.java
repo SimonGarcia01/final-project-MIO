@@ -36,7 +36,8 @@ public class Client {
 //            );
 
             //Make the observer
-            ObserverImpl observer = new ObserverImpl(serverConnection);
+            UI ui = new UI();
+            ObserverImpl observer = new ObserverImpl(serverConnection, ui);
             //Make the proxy that can be called after
             ObserverPrx observerPrx = ObserverPrx.uncheckedCast(
                     adapter.addWithUUID(observer)

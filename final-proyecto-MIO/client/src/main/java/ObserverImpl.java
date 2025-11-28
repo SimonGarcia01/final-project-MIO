@@ -5,9 +5,11 @@ import com.zeroc.Ice.Current;
 public class ObserverImpl implements Observer {
 
     private final ConnectionPrx serverConnection;
+    private final UI ui;
 
-    public ObserverImpl(ConnectionPrx serverConnection) {
+    public ObserverImpl(ConnectionPrx serverConnection, UI ui) {
         this.serverConnection = serverConnection;
+        this.ui = ui;
     }
 
     @Override
@@ -16,6 +18,8 @@ public class ObserverImpl implements Observer {
 
         // Now call the server to get the updated graph
         String graph = serverConnection.getUpdateGraph();
-        System.out.println(graph);
+
+        //Now call the UI to print the graph
+        ui.updateMapNotif(graph);
     }
 }
