@@ -6,6 +6,25 @@ module Demo {
         void notifyUpdate();
     }
 
+    //Representation of a datagram
+    struct Datagram {
+        int eventType;
+        string registerDate;
+        int stopId;
+        int odometer;
+        double latitude;
+        double longitude;
+        int taskId;
+        int lineId;
+        int tripId;
+        long unknown1;
+        string datagramDate;
+        int busId;
+    };
+
+    //List of datagrams
+    sequence<Datagram> DatagramSeq;
+
     //server side publisher
     interface Connection {
         // Register a client observer
@@ -14,6 +33,8 @@ module Demo {
         // The client requests an updated graph
         string getUpdateGraph();
 
+        //To receive the datagrams
+        void sendDatagrams(DatagramSeq datagrams);
     }
 
 };

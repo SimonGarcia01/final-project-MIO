@@ -1,4 +1,5 @@
 import Demo.Connection;
+import Demo.Datagram;
 import Demo.ObserverPrx;
 import com.zeroc.Ice.Current;
 
@@ -21,6 +22,15 @@ public class ConnectionImpl implements Connection {
     public String getUpdateGraph(Current current) {
         System.out.println("Graph requested");
         return "Graph string test";
+    }
+
+    @Override
+    public void sendDatagrams(Datagram[] datagrams, Current current) {
+        System.out.println("Recibidos " + datagrams.length + " datagramas:");
+
+        for (Datagram d : datagrams) {
+            System.out.println("Bus " + d.busId + " stop=" + d.stopId);
+        }
     }
 
     // This is to notify all the observers

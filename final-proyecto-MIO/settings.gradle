@@ -1,2 +1,2 @@
 rootProject.name = 'final-proyecto-MIO'
-include 'server','client'
+include 'server','client','MIO'
