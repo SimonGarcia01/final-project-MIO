@@ -41,8 +41,8 @@ public class GraphController {
     }
 
     // We connect edges between vertexes
-    public void connectEdge(IGraph<Vertex> graph, String stop1Id, String stop2Id, double weight) throws GraphException {
-        graph.addEdge(stop1Id, stop2Id, weight);
+    public void connectEdge(IGraph<Vertex> graph, String lineId, String stop1Id, String stop2Id, double weight) throws GraphException {
+        graph.addEdge(lineId, stop1Id, stop2Id, weight);
     }
 
 }

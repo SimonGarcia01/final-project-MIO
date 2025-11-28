@@ -19,16 +19,20 @@ public class Main {
             System.out.println();
 
             System.out.println("=== ADDING EDGES ===");
-            graph.addEdge("1", "2", 5.0);
-            graph.addEdge("1", "3", 2.0);
-            graph.addEdge("2", "4", 1.5);
-            graph.addEdge("3", "4", 3.2);
-            graph.printMatrix();
+            graph.addEdge("1", "1", "2", 5.0);
+            graph.addEdge("1", "1", "3", 2.0);
+            graph.addEdge("2", "2", "4", 1.5);
+            graph.addEdge("2", "3", "4", 3.2);
+            graph.addEdge("3", "2", "3", 5.2);
+            System.out.println(graph.printMatrix());
             System.out.println();
+
+            // Imprimos los edges pero en lista agrupados por nodo
+            System.out.println(graph.getEdges());
 
             System.out.println("=== TRY PARALLEL EDGE (SHOULD FAIL) ===");
             try {
-                graph.addEdge("1", "2", 7.0);
+                graph.addEdge("1", "1", "2", 7.0);
             } catch (GraphException ex) {
                 System.out.println("Caught expected error: " + ex.getMessage());
             }
@@ -45,7 +49,7 @@ public class Main {
             System.out.println();
 
             System.out.println("=== ADD MORE EDGES AFTER COMPACTION ===");
-            graph.addEdge("1", "4", 9.9);
+            graph.addEdge("3", "1", "4", 9.9);
             graph.printMatrix();
             System.out.println();
 

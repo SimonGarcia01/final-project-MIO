@@ -9,6 +9,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.example.modelStructures.MatrixGraph.ANSI_CYAN;
+import static org.example.modelStructures.MatrixGraph.ANSI_RESET;
 
 public class Task {
 
@@ -19,6 +23,7 @@ public class Task {
     private static HashMap<String, Integer> stopsWithOrientations = new HashMap<>();
     private static HashMap<String, Integer> stopsWithVariants = new HashMap<>();
     private static HashMap<String, Integer> stopsWithStopSequences = new HashMap<>();
+    private List<String[]> input = new ArrayList<>();
 
     // Scanner
     private static Scanner scanner = new Scanner(System.in);
@@ -29,20 +34,18 @@ public class Task {
 
         // 2111 is the size of the stops that are in linestops. There are 8 stops that are not in linestops.
         graph = control.createGraph(2111);
-        System.out.println(task.readStopsAndCreateVertexes());
-
-        // MUY IMPORTANTE, NO BORRAR. Aunque no se vea porque no tiene retorno,
-        // esta creando un mapa con todos los agrupamientos creando asi un orden compuesto. OJO
-        task.createMaps();
+        //System.out.println(task.readStopsAndCreateVertexes());
+        task.readStopsAndCreateVertexes();
 
         // Group by lines
-        System.out.println(task.sortByConditions());
+        //System.out.println(task.sortByConditions());
+        task.sortByConditions();
 
 
         // Create and add edges
-        System.out.println(task.createAndConnectEdges());
+        //System.out.println(task.createAndConnectEdges());
+        task.createAndConnectEdges();
 
-        // Si quiere visualizar la visualizar
 
         int option;
 
@@ -50,8 +53,9 @@ public class Task {
             System.out.println("\n*** BIENVENIDO A NUESTRO GRAFO ***\n");
             System.out.println("-- Menu --\n");
             System.out.println("1. Mostrar lista de paradas ordenadas por ruta, orientación, variante y stopsequence.");
-            System.out.println("2. Mostrar matriz de pesos del grafo (por ahora, donde hay una relación se pone 1 y donde no 0). Matriz muy grande, utilizar buscador de consola para encontrar 1.0's");
-            System.out.println("3. Salir.");
+            System.out.println("2. Mostrar lista de paradas ordenadas por ruta, orientación, variante y stopsequence con subgrafo.");
+            System.out.println("3. Mostrar matriz de pesos del grafo (por ahora, donde hay una relación se pone 1 y donde no 0). Matriz muy grande, utilizar buscador de consola para encontrar 1.0's");
+            System.out.println("4. Salir.");
 
             System.out.print("Digite su opcion: ");
             option = scanner.nextInt();
@@ -59,12 +63,27 @@ public class Task {
 
             switch (option) {
                 case 1:
-                    System.out.println(graph.getVertices());
+                    System.out.println(graph.getEdges());
+                    //var edges = graph.getEdges();
+                    /*
+                    edges.stream().collect(Collectors.groupingBy(String::valueOf)).forEach((k,v) -> {
+                        System.out.println("Clave: "+k+" Cantidad: "+v.size());
+                        v.forEach(System.out::println);
+                    });
+                     */
+
                     break;
                 case 2:
-                    System.out.println(graph.printMatrix());
+                    var list = graph.getVertices().stream().collect(Collectors.groupingBy(Vertex::getLineId));
+                    list.forEach((lineId, lista) -> {
+                        System.out.println(ANSI_CYAN + "Ruta: " + lineId + ANSI_RESET);
+                        lista.forEach(System.out::println);
+                    });
                     break;
                 case 3:
+                    System.out.println(graph.printMatrix());
+                    break;
+                case 4:
                     System.out.println("¡Chao profe! ¡Esperamos que le haya gustado nuestro avance!");
                     break;
                 default:
@@ -81,6 +100,7 @@ public class Task {
         String path = "src/main/resources/linestops-241.csv";
         File csv = new File(path);
 
+
         try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
             String line;
             boolean firstLine = true;
@@ -96,6 +116,7 @@ public class Task {
                         continue;
                 }
 
+
                 // Simple CSV split (assumes stable CSV without quoted commas)
                 String[] parts = line.split(",", -1);
                 if (parts.length < 1) {
@@ -103,6 +124,10 @@ public class Task {
                     System.err.println("Skipping malformed line: " + line);
                     continue;
                 }
+
+                // We add each line to the arraylist
+                input.add(parts);
+                //System.out.println(Arrays.stream(Arrays.stream(parts).toArray()).toList());
 
                 // Stops by line
                 String stopId = parts[4].trim();
@@ -147,7 +172,6 @@ public class Task {
         String path = "src/main/resources/stops-241.csv";
         File csv = new File(path);
 
-        int imported = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
             String line;
             boolean firstLine = true;
@@ -194,7 +218,6 @@ public class Task {
                 int variant = stopsWithVariants.get(stopId);
                 int stopsequence = stopsWithStopSequences.get(stopId);
                 control.createAndAddVertex(graph, name, stopId, x, y, lineId, orientation, variant, stopsequence);
-                imported++;
 
             }
 
@@ -230,7 +253,7 @@ public class Task {
         // We create the edge between two vertexes.
         try {
 
-            createMaps();
+            //createMaps();
             //sortByConditions();
 
             // No lo puedo igualar a graph.getVertices() porque sino me borra los elementos de la lista original
@@ -243,6 +266,7 @@ public class Task {
             vertexes2.remove(0);
 
             // Iterator
+            /*
             Iterator<Vertex> itOne=vertexes1.iterator();
             Iterator<Vertex> itTwo=vertexes2.iterator();
 
@@ -254,6 +278,24 @@ public class Task {
                 control.connectEdge(graph, vertex1.getStopId(), vertex2.getStopId(), 1);
 
             }
+             */
+
+
+            // No recorro vertices sino linestops que son las conexiones
+            String lineId = "";
+            String stop1Id = "";
+            String stop2Id = "";
+
+            for(int i = 0; i < input.size()-1; i++) {
+
+                lineId = input.get(i)[3];
+                stop1Id = input.get(i)[4];
+                stop2Id = input.get(i+1)[4];
+
+                control.connectEdge(graph, lineId, stop1Id, stop2Id, 1);
+
+            }
+
 
             return "Edges created and added to the graph successfully";
 
