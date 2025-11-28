@@ -2,6 +2,8 @@ import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.ObjectAdapter;
 import com.zeroc.Ice.Util;
 
+import java.util.Scanner;
+
 public class Server {
     public static void main(String[] args) {
 
@@ -20,6 +22,19 @@ public class Server {
             System.out.println("serverconnection - port 1090");
 
             adapter.activate();
+
+            new Thread(() -> {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Press ENTER to notify observers...");
+
+                while (true) {
+                    scanner.nextLine();
+                    System.out.println("Notifying observers...");
+                    serverConnection.notifyObservers();
+                }
+
+            }).start();
+
             communicator.waitForShutdown();
         } catch(Exception e){
             e.printStackTrace();

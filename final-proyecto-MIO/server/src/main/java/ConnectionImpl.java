@@ -20,7 +20,6 @@ public class ConnectionImpl implements Connection {
     @Override
     public String getUpdateGraph(Current current) {
         System.out.println("Graph requested");
-        notifyObservers();
         return "Graph string test";
     }
 

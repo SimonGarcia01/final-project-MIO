@@ -36,7 +36,7 @@ public class Client {
 //            );
 
             //Make the observer
-            ObserverImpl observer = new ObserverImpl();
+            ObserverImpl observer = new ObserverImpl(serverConnection);
             //Make the proxy that can be called after
             ObserverPrx observerPrx = ObserverPrx.uncheckedCast(
                     adapter.addWithUUID(observer)
@@ -49,10 +49,6 @@ public class Client {
             //Now subscribe the client
             serverConnection.subscribe(observerPrx);
             System.out.println("Subscribed to the server!");
-
-            System.out.println("Asking for updated graph:");
-            String graph = serverConnection.getUpdateGraph();
-            System.out.println(graph);
 
             communicator.waitForShutdown();
         } catch (Exception e){
