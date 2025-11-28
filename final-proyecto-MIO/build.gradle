@@ -1,11 +1,10 @@
 plugins {
-    id 'java'
+    id 'com.zeroc.gradle.ice-builder.slice' version '1.5.0' apply false
 }
-
-version = '1.0-SNAPSHOT'
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'com.zeroc.gradle.ice-builder.slice'
 
     repositories {
         mavenCentral()
@@ -18,6 +17,13 @@ subprojects {
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
+    slice {
+        java {
+            srcDir = file("${rootProject.projectDir}/slice")
+            include = ["**/*.ice"]
+        }
+    }
+
     test {
         useJUnitPlatform()
     }
@@ -26,7 +32,8 @@ subprojects {
         manifest {
             attributes(
                     "Main-Class": project.name.capitalize(),
-                    "Class-Path": configurations.runtimeClasspath.collect { it.toURI() }.join(' ')
+                    "Class-Path": configurations.runtimeClasspath.resolve().collect { it.toURI() }.join(' ')
+                    //"Class-Path": configurations.runtimeClasspath.collect { it.toURI() }.join(' ')
             )
         }
     }
