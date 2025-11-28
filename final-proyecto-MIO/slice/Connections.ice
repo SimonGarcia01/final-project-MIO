@@ -1,11 +1,5 @@
 module Demo {
 
-    //client side subscriber
-    interface Observer {
-        //Inform observer to get updated graph
-        void notifyUpdate();
-    }
-
     //Representation of a datagram
     struct Datagram {
         int eventType;
@@ -25,13 +19,10 @@ module Demo {
     //List of datagrams
     sequence<Datagram> DatagramSeq;
 
-    //server side publisher
+    //Server Connection Interface
     interface Connection {
-        // Register a client observer
-        void subscribe(Observer* observer);
-
         // The client requests an updated graph
-        string getUpdateGraph();
+        string getUpdatedGraph();
 
         //To receive the datagrams
         void sendDatagrams(DatagramSeq datagrams);

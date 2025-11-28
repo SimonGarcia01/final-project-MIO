@@ -1,14 +1,8 @@
 import Demo.Connection;
 import Demo.Datagram;
-import Demo.ObserverPrx;
 import com.zeroc.Ice.Current;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConnectionImpl implements Connection {
-
-    private final List<ObserverPrx> observers = new ArrayList<>();
 
     private final CenterController centerController;
 
@@ -17,15 +11,7 @@ public class ConnectionImpl implements Connection {
     }
 
     @Override
-    public void subscribe(ObserverPrx observer, Current current) {
-        if (!observers.contains(observer)) {
-            observers.add(observer);
-            System.out.println("Observer subscribed: " + observer);
-        }
-    }
-
-    @Override
-    public String getUpdateGraph(Current current) {
+    public String getUpdatedGraph(Current current) {
         System.out.println("Graph requested");
         return centerController.getGraph();
     }
@@ -43,13 +29,5 @@ public class ConnectionImpl implements Connection {
     public void receiveDatagram(Datagram datagram, Current current) {
         System.out.println("Bus " + datagram.busId + " stop=" + datagram.stopId);
         centerController.setGraph(datagram.registerDate);
-        notifyObservers();
-    }
-
-    // This is to notify all the observers
-    public void notifyObservers() {
-        for (ObserverPrx prx : observers) {
-            prx.notifyUpdate();
-        }
     }
 }
