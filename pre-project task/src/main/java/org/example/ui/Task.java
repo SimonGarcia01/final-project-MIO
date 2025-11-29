@@ -69,10 +69,10 @@ public class Task {
                     System.out.println(graph.printMatrix());
                     break;
                 case 4:
-                    System.out.println("¡Chao profe! ¡Esperamos que le haya gustado nuestro avance!");
+                    System.out.println("\n¡Chao profe! ¡Esperamos que le haya gustado nuestro avance!");
                     break;
                 default:
-                    System.out.println("Opcion no valida. Vuelva a intentarlo.");
+                    System.out.println("\nOpción no valida. Vuelva a intentarlo.");
                     break;
             }
 
