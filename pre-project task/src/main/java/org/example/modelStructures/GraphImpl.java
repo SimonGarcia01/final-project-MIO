@@ -62,7 +62,7 @@ public class GraphImpl implements IGraph<Vertex> {
     public void addEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
 
         int i = findStopIndexById(stop1Id); // -> x
-        //System.out.println("Index: " + i);
+        System.out.println("Index: " + i);
         //int j = findStopIndexById(stop2Id); // -> y
 
         // Tengo que buscar la posicion en la matriz de stop1Id y de Stop2Id

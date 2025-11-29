@@ -76,7 +76,7 @@ public class Task {
                     break;
             }
 
-        } while (option != 3);
+        } while (option != 4);
 
     }
 
