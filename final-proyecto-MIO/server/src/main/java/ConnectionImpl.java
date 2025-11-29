@@ -1,4 +1,6 @@
+import Demo.ArcUpdate;
 import Demo.Connection;
+import Demo.Data;
 import Demo.Datagram;
 import com.zeroc.Ice.Current;
 
@@ -29,5 +31,15 @@ public class ConnectionImpl implements Connection {
     public void receiveDatagram(Datagram datagram, Current current) {
         System.out.println("Bus " + datagram.busId + " stop=" + datagram.stopId);
         centerController.setGraph(datagram.registerDate);
+    }
+
+    @Override
+    public Data getDequeueData(Current current) {
+        return null;
+    }
+
+    @Override
+    public void receiveArcUpdate(ArcUpdate arcUpdate, Current current) {
+
     }
 }
