@@ -51,30 +51,31 @@ public class GraphImpl implements IGraph<Vertex> {
         edges.forEach((key, value) -> st.append("\nRuta " + ANSI_CYAN + key + ANSI_RESET + "\n" + value));
         return String.valueOf(st);
 
-        // Hacer un group by porque con ciclos se va a demorar mucho
-
-
     }
 
     //Add an edge between two vertices
     @Override
     public void addEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
 
-        int i = findStopIndexById(stop1Id);
-        //System.out.println(i);
-        int j = findStopIndexById(stop2Id);
+        //int i = findStopIndexById(stop1Id); // -> x
+        //int j = findStopIndexById(stop2Id); // -> y
+
+        // Tengo que buscar la posicion en la matriz de stop1Id y de Stop2Id
+        // Para poder hacer esto, debo encontrar el vertice
+
+        // Los vertices son PARADAS
+
 
         /*
         if (i == j)
             throw new GraphException("Self-loops are not allowed.");
-        */
-        /*
+
         if (matrix[i][j] != 0.0)
             throw new GraphException("Parallel edges are not allowed.");
          */
 
         // ESTO NO LO ESTA HACIENDO BIEN. OJO
-        matrix[i][j] = weight;
+        //matrix[i][j] = weight;
 
         // Si la key es diferente se crea una lista.
         // Se hace una lista por key
@@ -111,6 +112,7 @@ public class GraphImpl implements IGraph<Vertex> {
     //Remove an edge between two vertices
     @Override
     public void removeEdge(String Stop1Id, String Stop2Id) throws GraphException {
+
         int i = findStopIndexById(Stop1Id);
         int j = findStopIndexById(Stop2Id);
 
@@ -123,6 +125,7 @@ public class GraphImpl implements IGraph<Vertex> {
     //Remove a vertex
     @Override
     public void removeVertex(String StopId) throws GraphException {
+
         int idx = findStopIndexById(StopId);
 
         vertices.remove(idx);
@@ -145,6 +148,7 @@ public class GraphImpl implements IGraph<Vertex> {
             matrix[n][i] = 0.0;
             matrix[i][n] = 0.0;
         }
+
     }
 
     @Override
@@ -162,6 +166,7 @@ public class GraphImpl implements IGraph<Vertex> {
         return vertices;
     }
 
+    // DESPUES ACOMODO ESTA, PRIMERO ACOMODO LA MATRIZ DE ADYACENCIA. OJO
     public int findStopIndexById(String id) throws GraphException {
         for (int i = 0; i < vertices.size(); i++) {
             if (vertices.get(i).getStopId().equals(id)) {

@@ -9,10 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.example.modelStructures.GraphImpl.ANSI_CYAN;
-import static org.example.modelStructures.GraphImpl.ANSI_RESET;
 
 public class Task {
 
@@ -39,7 +36,7 @@ public class Task {
 
         // Group by lines
         //System.out.println(task.sortByConditions());
-        task.sortByConditions();
+        //task.sortByConditions();
 
 
         // Create and add edges
@@ -63,15 +60,15 @@ public class Task {
 
             switch (option) {
                 case 1:
-                    //System.out.println(graph.getVertices());
                     System.out.println(graph.getEdges());
                     break;
                 case 2:
-                    var list = graph.getVertices().stream().collect(Collectors.groupingBy(Vertex::getLineId));
-                    list.forEach((lineId, lista) -> {
-                        System.out.println(ANSI_CYAN + "Ruta: " + lineId + ANSI_RESET);
-                        lista.forEach(System.out::println);
-                    });
+                    System.out.println(graph.getVertices());
+                    //var list = graph.getVertices().stream().collect(Collectors.groupingBy(Vertex::getLineId));
+                    //list.forEach((lineId, lista) -> {
+                      //  System.out.println(ANSI_CYAN + "Ruta: " + lineId + ANSI_RESET);
+                        //lista.forEach(System.out::println);
+                    //});
                     break;
                 case 3:
                     System.out.println(graph.printMatrix());
@@ -188,6 +185,7 @@ public class Task {
                     continue;
                 }
 
+
                 String stopId = parts[0].trim();
 
                 if(Arrays.asList(nolinestops).contains(stopId)) {
@@ -197,6 +195,7 @@ public class Task {
                 String name = parts[3].trim();
                 double x;
                 double y;
+
                 try {
                     x = Double.parseDouble(parts[4].trim()) / 1e7;
                     y = Double.parseDouble(parts[5].trim()) / 1e7;
@@ -206,11 +205,11 @@ public class Task {
                 }
 
                 // We create the stops. Each stop is a vertex.
-                String lineId = stopsWithLines.get(stopId);
-                int orientation = stopsWithOrientations.get(stopId);
-                int variant = stopsWithVariants.get(stopId);
-                int stopsequence = stopsWithStopSequences.get(stopId);
-                control.createAndAddVertex(graph, name, stopId, x, y, lineId, orientation, variant, stopsequence);
+                //String lineId = stopsWithLines.get(stopId);
+                //int orientation = stopsWithOrientations.get(stopId);
+                //int variant = stopsWithVariants.get(stopId);
+                //int stopsequence = stopsWithStopSequences.get(stopId);
+                control.createAndAddVertex(graph, name, stopId, x, y);
 
             }
 
@@ -227,19 +226,21 @@ public class Task {
     }
 
     // This method read linestops file and group by line
+    /*
     public String sortByConditions() {
 
             // Hago groupBy por ruta
             List<Vertex> list = new ArrayList<>();
-            graph.getVertices().stream().sorted(Comparator.comparing(Vertex::getLineId)
-                            .thenComparing(Vertex::getOrientation)
-                            .thenComparing(Vertex::getVariant)
-                            .thenComparing(Vertex::getStopSequence))
-                            .forEach(list::add);
+            //graph.getVertices().stream().sorted(Comparator.comparing(Vertex::getLineId)
+              //              .thenComparing(Vertex::getOrientation)
+               //             .thenComparing(Vertex::getVariant)
+                //            .thenComparing(Vertex::getStopSequence))
+                  //          .forEach(list::add);
             graph.setVertexes(list);
             return "Vertexes sorted ready.";
 
     }
+     */
 
     // This method create and add edges to the graph
     public String createAndConnectEdges(){
@@ -263,7 +264,7 @@ public class Task {
                 variant = input.get(i)[6];
                 stopSequence = input.get(i)[1];
 
-                control.connectEdge(graph, lineId, stop1Id, stop2Id, orientation, variant, stopSequence, 1);
+                control.connectEdge(graph, lineId, stop1Id, stop2Id, orientation, variant, stopSequence, 1.0);
 
             }
 

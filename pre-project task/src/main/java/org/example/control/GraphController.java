@@ -19,20 +19,13 @@ public class GraphController {
     }
 
     // We read stops.csv file
-    public void createAndAddVertex(IGraph<Vertex> graph, String name, String id, double x, double y, String lineId, int orientation, int variant, int stopSequence) {
+    public void createAndAddVertex(IGraph<Vertex> graph, String name, String stopId, double x, double y) {
 
-        Vertex s = new Vertex(name, id, x, y, lineId, orientation, variant, stopSequence);
+        Vertex s = new Vertex(name, stopId, x, y);
         graph.add(s);
 
     }
-
-    public void createAndAddVertex(IGraph<Vertex> graph, String name, String id, double x, double y) {
-
-        Vertex s = new Vertex(name, id, x, y);
-        graph.add(s);
-
-    }
-
+    
     public Vertex createVertex(String name) {
 
         Vertex s = new Vertex(name);
