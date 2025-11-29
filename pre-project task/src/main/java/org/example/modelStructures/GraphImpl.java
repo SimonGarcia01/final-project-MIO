@@ -15,6 +15,8 @@ public class GraphImpl implements IGraph<Vertex> {
 
     //Attributes
     private List<Vertex> vertices;
+    // We also create a SortedMap of vertices (HashMap sorted) for if necessary
+    private SortedMap<String, Vertex> verticesSortedMap;
     // This data structure is ordered by default by keys
     private SortedMap<String, List<String>> edges;
     private double[][] matrix;
@@ -29,6 +31,7 @@ public class GraphImpl implements IGraph<Vertex> {
     public GraphImpl(int maxSize) {
         this.maxSize = maxSize;
         this.vertices = new ArrayList<>();
+        this.verticesSortedMap = new TreeMap<>();
         this.edges = new TreeMap<>();
         // 0.0 is the default number for double.
         this.matrix = new double[maxSize][maxSize];
@@ -43,6 +46,7 @@ public class GraphImpl implements IGraph<Vertex> {
             throw new IllegalStateException("Max graph size reached.");
 
         vertices.add(value);
+        verticesSortedMap.put(value.getStopId(), value);
     }
 
     @Override
@@ -54,7 +58,6 @@ public class GraphImpl implements IGraph<Vertex> {
     @Override
     public String getEdges() {
 
-        //return edges;
         StringBuilder st = new StringBuilder();
         edges.forEach((key, value) -> st.append("\n" + ANSI_BACKGROUND_BLACK + "Ruta " +  ANSI_MAGENTA + findNameByLineId(key) + ANSI_YELLOW + " ➜ id: " + ANSI_CYAN + key + ANSI_RESET + "\n" + value));
         return String.valueOf(st);
@@ -275,7 +278,6 @@ public class GraphImpl implements IGraph<Vertex> {
         return vertices;
     }
 
-    // DESPUES ACOMODO ESTA, PRIMERO ACOMODO LA MATRIZ DE ADYACENCIA. OJO
     public int findStopIndexById(String id) throws GraphException {
         for (int i = 0; i < vertices.size(); i++) {
             if (vertices.get(i).getStopId().equals(id)) {
@@ -311,4 +313,9 @@ public class GraphImpl implements IGraph<Vertex> {
         temporalLines.add(lineId);
     }
 
+    public String getVerticesSortedMap() {
+        StringBuilder st = new StringBuilder();
+        verticesSortedMap.forEach((key, value) -> st.append("\n" + ANSI_BACKGROUND_BLACK + "Parada " +  ANSI_MAGENTA + value.getName() + ANSI_YELLOW + " ➜ id: " + ANSI_CYAN + key + ANSI_RESET + "\n" + value));
+        return String.valueOf(st);
+    }
 }

@@ -54,7 +54,7 @@ public class Task {
                     System.out.println(graph.getEdges());
                     break;
                 case 2:
-                    System.out.println(graph.getVertices());
+                    System.out.println(graph.getVerticesSortedMap());
                     break;
                 case 3:
                     System.out.println(graph.printMatrix());

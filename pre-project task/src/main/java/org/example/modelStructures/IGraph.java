@@ -2,8 +2,8 @@ package org.example.modelStructures;
 
 import org.example.exceptions.GraphException;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.SortedMap;
 
 public interface IGraph<Vertex> {
     void add(Vertex value);
@@ -17,5 +17,6 @@ public interface IGraph<Vertex> {
     public void createLine(String lineId, String lineName);
     public void group();
     void createAdjacencyMatrix(String stop1Id, String stop2Id) throws GraphException;
+    String getVerticesSortedMap();
 
 }
