@@ -22,7 +22,6 @@ public class GraphImpl implements IGraph<Vertex> {
     private List<String> infoByLine = new ArrayList<>();
     private HashMap<String, String> lines = new HashMap<>();
     private List<String> temporalLines = new ArrayList<>();
-    private List<String> temporal2 = new ArrayList<>();
 
 
     
@@ -63,29 +62,10 @@ public class GraphImpl implements IGraph<Vertex> {
     }
 
     //Add an edge between two vertices
-    int cnt = 0;
     @Override
-    public void addEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
+    public void addEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence) {
 
-
-
-        // Tengo que buscar la posicion en la matriz de stop1Id y de Stop2Id
-        // Para poder hacer esto, debo encontrar el vertice
-
-        // Los vertices son PARADAS
-
-
-
-
-
-
-        // ESTO NO LO ESTA HACIENDO BIEN. OJO
-        //matrix[i][j] = 1.0;
-        cnt++;
-
-        //System.out.println("LineId: " + lineId);
-
-        String infoEdge = makeInfoEdge(lineId, stop1Id, orientation, variant, stopSequence, weight);
+        String infoEdge = makeInfoEdge(lineId, stop1Id, orientation, variant, stopSequence);
         infoByLine.add(infoEdge);
 
     }
@@ -203,15 +183,13 @@ public class GraphImpl implements IGraph<Vertex> {
 
 
     // Auxiliar function for avoid duplicity
-    public String makeInfoEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) {
+    public String makeInfoEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence) {
 
         String infoEdge = "\nLineId: " + lineId;
         infoEdge += ", Parada: " + findNameByStopId(stop1Id);
-        //infoEdge += ", Destino: " + findNameByStopId(stop2Id);
         infoEdge += ", Orientación: " + orientation;
         infoEdge += ", Variante: " + variant;
         infoEdge += ", StopSequence: " + stopSequence;
-        infoEdge += ", Peso: " + weight + ";\n";
 
         return infoEdge;
 
@@ -227,19 +205,9 @@ public class GraphImpl implements IGraph<Vertex> {
         // Column
         int j = findStopIndexById(stop2Id); // -> y
 
-        /*
-        if (matrix[i][j] != 0.0) {
-            throw new GraphException("Parallel edges are not allowed.");
-        }
-         */
-
-        if(i != j) {
+        if(i != j && matrix[i][j] == 0.0) {
             matrix[i][j] = 1.0;
         }
-
-        System.out.println(matrix[1391][1390]);
-        //matrix[1391][1390] = 2.0;
-        System.out.println("Coordenadas: (" + i + ", " + j + ")");
 
     }
 

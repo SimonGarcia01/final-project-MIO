@@ -34,8 +34,8 @@ public class GraphController {
     }
 
     // We connect edges between vertexes
-    public void connectEdge(IGraph<Vertex> graph, String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
-        graph.addEdge(lineId, stop1Id, orientation, variant, stopSequence, weight);
+    public void connectEdge(IGraph<Vertex> graph, String lineId, String stop1Id, String orientation, String variant, String stopSequence) {
+        graph.addEdge(lineId, stop1Id, orientation, variant, stopSequence);
     }
 
     // We create lines for later assign the name associated to a lineId

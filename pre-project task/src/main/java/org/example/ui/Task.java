@@ -16,10 +16,6 @@ public class Task {
     // Attributes, global variables
     private static IGraph<Vertex> graph;
     private static GraphController control = new GraphController();
-    private static HashMap<String, String> stopsWithLines = new HashMap<>();
-    private static HashMap<String, Integer> stopsWithOrientations = new HashMap<>();
-    private static HashMap<String, Integer> stopsWithVariants = new HashMap<>();
-    private static HashMap<String, Integer> stopsWithStopSequences = new HashMap<>();
     private List<String[]> input = new ArrayList<>();
 
     // Scanner
@@ -31,17 +27,12 @@ public class Task {
 
         // 2111 is the size of the stops that are in linestops. There are 8 stops that are not in linestops.
         graph = control.createGraph(2111);
-        //System.out.println(task.readStopsAndCreateVertexes());
-        task.readStopsAndCreateVertexes();
 
+        task.readStopsAndCreateVertexes();
         // Create lines
         task.readAndCreateLines();
-
-
         // Create and add edges
-        //System.out.println(task.createAndConnectEdges());
         task.createAndConnectEdges();
-
 
 
         int option;
@@ -182,7 +173,6 @@ public class Task {
 
             }
 
-
             return "Vertexes created successfully.";
 
         } catch (IOException e) {
@@ -200,7 +190,6 @@ public class Task {
         // We create the edge between two vertexes.
         try {
 
-
             // No recorro vertices sino linestops que son las conexiones
             String lineId;
             String stop1Id;
@@ -208,20 +197,19 @@ public class Task {
             String orientation;
             String variant;
             String stopSequence;
-            int cnt = 0;
+
 
             for (int i = 0; i < input.size(); i++) {
 
                 lineId = input.get(i)[3];
                 stop1Id = input.get(i)[4];
-                //stop2Id = input.get(i + 1)[4];
                 orientation = input.get(i)[2];
                 variant = input.get(i)[6];
 
                 stopSequence = input.get(i)[1];
 
-                control.connectEdge(graph, lineId, stop1Id, orientation, variant, stopSequence, 1.0);
-                cnt++;
+                control.connectEdge(graph, lineId, stop1Id, orientation, variant, stopSequence);
+
             }
 
             for(int i = 0; i < input.size()-1; i++) {
@@ -231,9 +219,6 @@ public class Task {
             }
 
             control.group(graph);
-
-            //System.out.println("Cnt: " + cnt);
-
 
             return "Edges created and added to the graph successfully";
 

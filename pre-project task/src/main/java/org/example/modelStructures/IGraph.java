@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IGraph<Vertex> {
     void add(Vertex value);
-    void addEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) throws GraphException;
+    void addEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence);
     void removeVertex(String StopId) throws GraphException;
     void removeEdge(String Stop1Id, String Stop2Id) throws GraphException;
     String printMatrix();
