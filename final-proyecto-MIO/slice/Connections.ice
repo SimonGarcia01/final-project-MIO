@@ -16,6 +16,32 @@ module Demo {
         int busId;
     };
 
+    struct Data {
+        bool orientation;
+        int lineId;
+        int busId;
+        double latitude;
+        double longitude;
+        string date;
+        int prevStopId;
+        string prevStopTime;
+    };
+
+    struct BusUpdate {
+        bool orientation;
+        int lineId;
+        int busId;
+        string timestamp;
+    };
+
+    struct ArcUpdate {
+        int stopMatrixId1;
+        int stopMatrixId2;
+        double averageSpeed;
+        BusUpdate bus;
+    };
+
+
     //List of datagrams
     sequence<Datagram> DatagramSeq;
 
@@ -29,6 +55,11 @@ module Demo {
 
         //Send real time datagrams
         void receiveDatagram(Datagram datagram);
-    }
 
+        //For estimators to get data
+        Data getDequeueData();
+
+        //For estimators to send Arc updates
+        void receiveArcUpdate(ArcUpdate arcUpdate);
+    };
 };
