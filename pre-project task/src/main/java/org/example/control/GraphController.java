@@ -47,4 +47,7 @@ public class GraphController {
         graph.group();
     }
 
+    public void createAdjacencyMatrix(IGraph<Vertex> graph, String stop1Id, String stop2Id) throws GraphException {
+        graph.createAdjacencyMatrix(stop1Id, stop2Id);
+    }
 }

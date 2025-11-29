@@ -16,4 +16,6 @@ public interface IGraph<Vertex> {
     String getEdges();
     public void createLine(String lineId, String lineName);
     public void group();
+    void createAdjacencyMatrix(String stop1Id, String stop2Id) throws GraphException;
+
 }

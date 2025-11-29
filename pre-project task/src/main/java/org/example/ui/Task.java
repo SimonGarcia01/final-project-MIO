@@ -178,8 +178,10 @@ public class Task {
 
                 // We create the stops. Each stop is a vertex.
                 control.createAndAddVertex(graph, name, stopId, x, y);
+                //control.createAdjancenyMatrix(graph, stopId);
 
             }
+
 
             return "Vertexes created successfully.";
 
@@ -220,6 +222,12 @@ public class Task {
 
                 control.connectEdge(graph, lineId, stop1Id, orientation, variant, stopSequence, 1.0);
                 cnt++;
+            }
+
+            for(int i = 0; i < input.size()-1; i++) {
+                stop1Id = input.get(i)[4];
+                stop2Id = input.get(i + 1)[4];
+                control.createAdjacencyMatrix(graph, stop1Id, stop2Id);
             }
 
             control.group(graph);
