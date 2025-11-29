@@ -27,7 +27,7 @@ public class DatagramReader {
                     String[] data = line.split(",");
 
                     Datagram d = new Datagram();
-                    d.eventType    = Integer.parseInt(data[0]);
+                    d.orientation    = Integer.parseInt(data[0]);
                     d.registerDate = data[1];
                     d.stopId       = Integer.parseInt(data[2]);
                     d.odometer     = Integer.parseInt(data[3]);

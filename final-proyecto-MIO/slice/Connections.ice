@@ -2,7 +2,7 @@ module Demo {
 
     //Representation of a datagram
     struct Datagram {
-        int eventType;
+        int orientation;
         string registerDate;
         int stopId;
         int odometer;
@@ -17,7 +17,7 @@ module Demo {
     };
 
     struct Data {
-        bool orientation;
+        int orientation;
         int lineId;
         int busId;
         double latitude;

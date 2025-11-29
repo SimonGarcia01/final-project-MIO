@@ -9,10 +9,10 @@ public class Server {
 
             ObjectAdapter adapter = communicator.createObjectAdapter("ConnectionAdapter");
 
-            CenterController centerController = new CenterController();
+            CenterController centerController = new CenterController(new QueueManager(), new Database());
+            //centerController.start();
 
             ConnectionImpl serverConnection = new ConnectionImpl(centerController);
-
             centerController.setConnection(serverConnection);
 
             adapter.add(serverConnection, Util.stringToIdentity("serverconnection"));
