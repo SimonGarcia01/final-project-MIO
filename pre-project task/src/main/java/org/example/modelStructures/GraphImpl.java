@@ -15,7 +15,8 @@ public class GraphImpl implements IGraph<Vertex> {
 
     //Attributes
     private List<Vertex> vertices;
-    private HashMap<String, List<String>> edges;
+    // This data structure is ordered by default by keys
+    private SortedMap<String, List<String>> edges;
     private double[][] matrix;
     private int maxSize;
     private List<String> infoByLine = new ArrayList<>();
@@ -26,7 +27,7 @@ public class GraphImpl implements IGraph<Vertex> {
     public GraphImpl(int maxSize) {
         this.maxSize = maxSize;
         this.vertices = new ArrayList<>();
-        this.edges = new HashMap<>();
+        this.edges = new TreeMap<>();
         // 0.0 is the default number for double.
         this.matrix = new double[maxSize][maxSize];
 
@@ -44,6 +45,7 @@ public class GraphImpl implements IGraph<Vertex> {
 
     @Override
     public void setVertexes(List<Vertex> vertexes) {
+
         this.vertices = vertexes;
     }
 
@@ -72,7 +74,7 @@ public class GraphImpl implements IGraph<Vertex> {
         int j = findStopIndexById(stop2Id); // -> y
 
 
-        System.out.println("Coordenadas: (" + i + ", " + j + ")");
+        //System.out.println("Coordenadas: (" + i + ", " + j + ")");
 
         // Tengo que buscar la posicion en la matriz de stop1Id y de Stop2Id
         // Para poder hacer esto, debo encontrar el vertice
@@ -84,10 +86,10 @@ public class GraphImpl implements IGraph<Vertex> {
         // AUN ESTA MAL PORQUE EFECTIVAMENTE ESTA TOMANDO VALORES IGUALES
         // TODO ES PORQUE SE ESTA UNIENDO DE SEGUIDO PERO EL HASHMAP NO TIENE ORDEN
         if (i == j)
-            System.out.println(stop1Id);
-            System.out.println(stop2Id);
-            System.out.println(i);
-            System.out.println(j);
+            //System.out.println(stop1Id);
+            //System.out.println(stop2Id);
+            //System.out.println(i);
+            //System.out.println(j);
             //throw new GraphException("Self-loops are not allowed.");
 
         /*
@@ -179,7 +181,7 @@ public class GraphImpl implements IGraph<Vertex> {
     @Override
     public String printMatrix() {
 
-        System.out.println("Mira: " + matrix[2094][2056]);
+        //System.out.println("Mira: " + matrix[2094][2056]);
         StringBuilder text = new StringBuilder();
         int n = vertices.size();
 
