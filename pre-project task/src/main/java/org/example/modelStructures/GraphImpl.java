@@ -22,6 +22,8 @@ public class GraphImpl implements IGraph<Vertex> {
     private List<String> infoByLine = new ArrayList<>();
     private HashMap<String, String> lines = new HashMap<>();
     private List<String> temporalLines = new ArrayList<>();
+    private List<String> temporal2 = new ArrayList<>();
+
 
     
     //Constructor
@@ -65,7 +67,6 @@ public class GraphImpl implements IGraph<Vertex> {
 
     @Override
     public void addEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
-
 
         // Positions in adjacency matriz are in the form: (row, colum)
 
@@ -121,10 +122,12 @@ public class GraphImpl implements IGraph<Vertex> {
 
                 if(infoByLine.get(m).split(", ")[0].split(": ")[1].equals(temporalLines.get(k))) {
                     filtered.add(infoByLine.get(m));
+
                 }
 
             }
 
+            filtered = sortOrientation(filtered);
             edges.put(temporalLines.get(k), filtered);
 
         }
@@ -133,15 +136,100 @@ public class GraphImpl implements IGraph<Vertex> {
 
     }
 
-    public void delete() {
+    // We sort each list associated to a key
+    public List<String> sortOrientation (List<String> list) {
+
+        List<String> temporal3 = new ArrayList<>();
+        List<String> temporal4 = new ArrayList<>();
+        List<String> temporal5 = new ArrayList<>();
+        HashSet<Integer> variants0 = new HashSet<>();
+        HashSet<Integer> variants1 = new HashSet<>();
+
+        for(String elem :  list) {
+            var orientation = Integer.parseInt(elem.split(", ")[2].split(": ")[1]);
+            if(orientation == 0) {
+                temporal4.add(elem);
+                variants0.add( Integer.parseInt(elem.split(", ")[3].split(": ")[1]));
+            }
+            else {
+                temporal5.add(elem);
+                variants1.add( Integer.parseInt(elem.split(", ")[3].split(": ")[1]));
+            }
+        }
+
+        temporal4 = sortVariant(temporal4);
+        temporal5 = sortVariant(temporal5);
+
+        for(Integer i : variants0) {
+            temporal4 = sortStopSequence(temporal4, i);
+        }
+
+        for(Integer i : variants1) {
+            temporal5 = sortStopSequence(temporal5, i);
+        }
+
+        temporal3.addAll(temporal4);
+        temporal3.addAll(temporal5);
+
+        return temporal3;
 
     }
+
+    // We sort each list associated to a key
+    public List<String> sortVariant (List<String> list) {
+
+        for(int i = 0; i < list.size()-1; i++) {
+
+            for(int j=0; j < (list.size()-i)-1; j++) {
+                var elem2 = list.get(j);
+                var variant2 = Integer.parseInt(elem2.split(", ")[3].split(": ")[1]);
+                var elem3 = list.get(j+1);
+                var variant3 = Integer.parseInt(elem3.split(", ")[3].split(": ")[1]);
+
+                if(variant2 > variant3) {
+                    list.set(j, elem3);
+                    list.set(j+1, elem2);
+                }
+            }
+
+        }
+
+        return list;
+
+    }
+
+    public List<String> sortStopSequence (List<String> list, int variant) {
+
+        for (int j = 0; j < (list.size() - 1); j++) {
+            var elem2 = list.get(j);
+            var sequence2 = Integer.parseInt(elem2.split(", ")[4].split(": ")[1]);
+            var variant2 = Integer.parseInt(elem2.split(", ")[3].split(": ")[1]);
+            var elem3 = list.get(j + 1);
+            var sequence3 = Integer.parseInt(elem3.split(", ")[4].split(": ")[1]);
+            var variant3 = Integer.parseInt(elem3.split(", ")[3].split(": ")[1]);
+
+            if (variant2 == variant) {
+                if (variant3 == variant) {
+                    if (sequence2 > sequence3) {
+                        list.set(j, elem3);
+                        list.set(j + 1, elem2);
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return list;
+
+    }
+
 
     // Auxiliar function for avoid duplicity
     public String makeInfoEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) {
 
         String infoEdge = "\nLineId: " + lineId;
-        infoEdge += ", Origen: " + findNameByStopId(stop1Id);
+        infoEdge += ", Parada: " + findNameByStopId(stop1Id);
         //infoEdge += ", Destino: " + findNameByStopId(stop2Id);
         infoEdge += ", Orientación: " + orientation;
         infoEdge += ", Variante: " + variant;
@@ -149,6 +237,10 @@ public class GraphImpl implements IGraph<Vertex> {
         infoEdge += ", Peso: " + weight + ";\n";
 
         return infoEdge;
+
+    }
+
+    public void createAdjacencyMatrix(String stop1Id, String stopId) {
 
     }
 
@@ -197,7 +289,6 @@ public class GraphImpl implements IGraph<Vertex> {
     @Override
     public String printMatrix() {
 
-        //System.out.println("Mira: " + matrix[2094][2056]);
         StringBuilder text = new StringBuilder();
         int n = vertices.size();
 
@@ -253,11 +344,4 @@ public class GraphImpl implements IGraph<Vertex> {
         temporalLines.add(lineId);
     }
 
-    public HashMap<String, String> getLines() {
-        return lines;
-    }
-
-    public void setLines(HashMap<String, String> lines) {
-        this.lines = lines;
-    }
 }

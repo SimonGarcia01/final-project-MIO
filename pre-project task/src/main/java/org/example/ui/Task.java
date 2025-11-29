@@ -44,8 +44,6 @@ public class Task {
 
 
 
-
-
         int option;
 
         do {
@@ -63,7 +61,6 @@ public class Task {
             switch (option) {
                 case 1:
                     System.out.println(graph.getEdges());
-                    //System.out.println(graph.getLines());
                     break;
                 case 2:
                     System.out.println(graph.getVertices());
@@ -201,6 +198,7 @@ public class Task {
         // We create the edge between two vertexes.
         try {
 
+
             // No recorro vertices sino linestops que son las conexiones
             String lineId;
             String stop1Id;
@@ -217,6 +215,7 @@ public class Task {
                 //stop2Id = input.get(i + 1)[4];
                 orientation = input.get(i)[2];
                 variant = input.get(i)[6];
+
                 stopSequence = input.get(i)[1];
 
                 control.connectEdge(graph, lineId, stop1Id, orientation, variant, stopSequence, 1.0);
@@ -225,7 +224,7 @@ public class Task {
 
             control.group(graph);
 
-            System.out.println("Cnt: " + cnt);
+            //System.out.println("Cnt: " + cnt);
 
 
             return "Edges created and added to the graph successfully";
