@@ -64,21 +64,10 @@ public class GraphImpl implements IGraph<Vertex> {
 
     //Add an edge between two vertices
     int cnt = 0;
-
     @Override
     public void addEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
 
-        // Positions in adjacency matriz are in the form: (row, colum)
 
-        // Row
-        int i = findStopIndexById(stop1Id); // -> x
-        //System.out.println("Index: " + i);
-
-        // Column
-        //int j = findStopIndexById(stop2Id); // -> y
-
-
-        //System.out.println("Coordenadas: (" + i + ", " + j + ")");
 
         // Tengo que buscar la posicion en la matriz de stop1Id y de Stop2Id
         // Para poder hacer esto, debo encontrar el vertice
@@ -87,20 +76,8 @@ public class GraphImpl implements IGraph<Vertex> {
 
 
 
-        // AUN ESTA MAL PORQUE EFECTIVAMENTE ESTA TOMANDO VALORES IGUALES
-        // TODO ES PORQUE SE ESTA UNIENDO DE SEGUIDO PERO EL HASHMAP NO TIENE ORDEN
-        //if (i == j)
-            // verificar variante
-            //System.out.println(stop1Id);
-            //System.out.println(stop2Id);
-            //System.out.println(i);
-            //System.out.println(j);
-            //throw new GraphException("Self-loops are not allowed.");
 
-        /*
-        if (matrix[i][j] != 0.0)
-            throw new GraphException("Parallel edges are not allowed.");
-         */
+
 
         // ESTO NO LO ESTA HACIENDO BIEN. OJO
         //matrix[i][j] = 1.0;
@@ -240,7 +217,29 @@ public class GraphImpl implements IGraph<Vertex> {
 
     }
 
-    public void createAdjacencyMatrix(String stop1Id, String stopId) {
+    @Override
+    public void createAdjacencyMatrix(String stop1Id, String stop2Id) throws GraphException {
+
+        // Positions in adjacency matriz are in the form: (row, colum)
+
+        // Row
+        int i = findStopIndexById(stop1Id); // -> x
+        // Column
+        int j = findStopIndexById(stop2Id); // -> y
+
+        /*
+        if (matrix[i][j] != 0.0) {
+            throw new GraphException("Parallel edges are not allowed.");
+        }
+         */
+
+        if(i != j) {
+            matrix[i][j] = 1.0;
+        }
+
+        System.out.println(matrix[1391][1390]);
+        //matrix[1391][1390] = 2.0;
+        System.out.println("Coordenadas: (" + i + ", " + j + ")");
 
     }
 
