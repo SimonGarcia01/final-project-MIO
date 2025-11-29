@@ -58,12 +58,21 @@ public class GraphImpl implements IGraph<Vertex> {
     }
 
     //Add an edge between two vertices
+    int cnt = 0;
     @Override
     public void addEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
 
+        // Positions in adjacency matriz are in the form: (row, colum)
+
+        // Row
         int i = findStopIndexById(stop1Id); // -> x
-        System.out.println("Index: " + i);
-        //int j = findStopIndexById(stop2Id); // -> y
+        //System.out.println("Index: " + i);
+
+        // Column
+        int j = findStopIndexById(stop2Id); // -> y
+
+
+        System.out.println("Coordenadas: (" + i + ", " + j + ")");
 
         // Tengo que buscar la posicion en la matriz de stop1Id y de Stop2Id
         // Para poder hacer esto, debo encontrar el vertice
@@ -71,16 +80,27 @@ public class GraphImpl implements IGraph<Vertex> {
         // Los vertices son PARADAS
 
 
-        /*
-        if (i == j)
-            throw new GraphException("Self-loops are not allowed.");
 
+        // AUN ESTA MAL PORQUE EFECTIVAMENTE ESTA TOMANDO VALORES IGUALES
+        // TODO ES PORQUE SE ESTA UNIENDO DE SEGUIDO PERO EL HASHMAP NO TIENE ORDEN
+        if (i == j)
+            System.out.println(stop1Id);
+            System.out.println(stop2Id);
+            System.out.println(i);
+            System.out.println(j);
+            //throw new GraphException("Self-loops are not allowed.");
+
+        /*
         if (matrix[i][j] != 0.0)
             throw new GraphException("Parallel edges are not allowed.");
          */
 
         // ESTO NO LO ESTA HACIENDO BIEN. OJO
-        //matrix[i][j] = weight;
+        matrix[i][j] = 1.0;
+        cnt++;
+
+        //System.out.println("A ver: " + matrix[i][j]);
+        //System.out.println("A ver: " + cnt);
 
         // Si la key es diferente se crea una lista.
         // Se hace una lista por key
@@ -158,13 +178,21 @@ public class GraphImpl implements IGraph<Vertex> {
 
     @Override
     public String printMatrix() {
+
+        System.out.println("Mira: " + matrix[2094][2056]);
         StringBuilder text = new StringBuilder();
         int n = vertices.size();
-        for (int i = 0; i < n; i++) {
-            text.append(Arrays.toString(Arrays.copyOf(matrix[i], n)));
+
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                text.append(matrix[i][j]);
+                text.append("\t");
+            }
             text.append("\n");
         }
-        return text.toString();
+
+        return String.valueOf(text);
+
     }
 
     public List<Vertex> getVertices() {
