@@ -9,6 +9,9 @@ public class GraphImpl implements IGraph<Vertex> {
 
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BACKGROUND_BLACK = "\u001B[40;1m";
+    public static final String ANSI_MAGENTA = "\u001B[35m";
+    public static final String ANSI_YELLOW = "\u001B[33;1m";
 
     //Attributes
     private List<Vertex> vertices;
@@ -16,6 +19,7 @@ public class GraphImpl implements IGraph<Vertex> {
     private double[][] matrix;
     private int maxSize;
     private List<String> infoByLine = new ArrayList<>();
+    private HashMap<String, String> lines = new HashMap<>();
 
     
     //Constructor
@@ -48,7 +52,7 @@ public class GraphImpl implements IGraph<Vertex> {
 
         //return edges;
         StringBuilder st = new StringBuilder();
-        edges.forEach((key, value) -> st.append("\nRuta " + ANSI_CYAN + key + ANSI_RESET + "\n" + value));
+        edges.forEach((key, value) -> st.append("\n" + ANSI_BACKGROUND_BLACK + "Ruta " +  ANSI_MAGENTA + findNameByLineId(key) + ANSI_YELLOW + " ➜ id: " + ANSI_CYAN + key + ANSI_RESET + "\n" + value));
         return String.valueOf(st);
 
     }
@@ -57,7 +61,8 @@ public class GraphImpl implements IGraph<Vertex> {
     @Override
     public void addEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
 
-        //int i = findStopIndexById(stop1Id); // -> x
+        int i = findStopIndexById(stop1Id); // -> x
+        //System.out.println("Index: " + i);
         //int j = findStopIndexById(stop2Id); // -> y
 
         // Tengo que buscar la posicion en la matriz de stop1Id y de Stop2Id
@@ -81,13 +86,13 @@ public class GraphImpl implements IGraph<Vertex> {
         // Se hace una lista por key
         if(!edges.containsKey(lineId)) {
             infoByLine = new ArrayList<>();
-            String infoEdge = makeInfoEdge(lineId, stop1Id, stop2Id, orientation, variant, stopSequence, weight);
+            String infoEdge = makeInfoEdge(stop1Id, stop2Id, orientation, variant, stopSequence, weight);
             // Agrupo toda la informacion de la misma ruta
             infoByLine.add(infoEdge);
             edges.put(lineId, infoByLine);
         }
         else {
-            String infoEdge = makeInfoEdge(lineId, stop1Id, stop2Id, orientation, variant, stopSequence, weight);
+            String infoEdge = makeInfoEdge(stop1Id, stop2Id, orientation, variant, stopSequence, weight);
             // Agrupo toda la informacion de la misma ruta
             infoByLine.add(infoEdge);
             edges.put(lineId, infoByLine);
@@ -96,10 +101,10 @@ public class GraphImpl implements IGraph<Vertex> {
     }
 
     // Auxiliar function for avoid duplicity
-    public String makeInfoEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) {
+    public String makeInfoEdge(String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) {
 
-        String infoEdge = "\nOrigen: " + stop1Id;
-        infoEdge += ", Destino: " + stop2Id;
+        String infoEdge = "\nOrigen: " + findNameByStopId(stop1Id);
+        infoEdge += ", Destino: " + findNameByStopId(stop2Id);
         infoEdge += ", Orientation: " + orientation;
         infoEdge += ", Variante: " + variant;
         infoEdge += ", StopSequence: " + stopSequence;
@@ -174,6 +179,31 @@ public class GraphImpl implements IGraph<Vertex> {
             }
         }
         throw new GraphException("Stop with ID " + id + " not found.");
+    }
+
+    // Auxiliar method for find the name given a stopId
+    public String findNameByStopId(String stopId) {
+
+        for(Vertex v :  vertices) {
+            if(v.getStopId().equals(stopId)) {
+                return v.getName();
+            }
+        }
+
+        return "No name found for this stopId.";
+
+    }
+
+    // Auxiliar method for find the name given a stopId
+    public String findNameByLineId(String lineId) {
+
+        return  lines.get(lineId) != null ? lines.get(lineId) : "No line found for this lineId.";
+
+    }
+
+    @Override
+    public void createLine(String lineId, String lineName) {
+        lines.put(lineId, lineName);
     }
 
 }

@@ -34,14 +34,14 @@ public class Task {
         //System.out.println(task.readStopsAndCreateVertexes());
         task.readStopsAndCreateVertexes();
 
-        // Group by lines
-        //System.out.println(task.sortByConditions());
-        //task.sortByConditions();
-
 
         // Create and add edges
         //System.out.println(task.createAndConnectEdges());
         task.createAndConnectEdges();
+
+
+        // Create lines
+        task.readAndCreateLines();
 
 
         int option;
@@ -49,8 +49,8 @@ public class Task {
         do {
             System.out.println("\n*** BIENVENIDO A NUESTRO GRAFO ***\n");
             System.out.println("-- Menu --\n");
-            System.out.println("1. Mostrar lista de paradas ordenadas por ruta, orientación, variante y stopsequence.");
-            System.out.println("2. Mostrar lista de paradas ordenadas por ruta, orientación, variante y stopsequence con subgrafo.");
+            System.out.println("1. Mostrar lista de paradas ordenadas por ruta, orientación, variante y stopsequence con subgrafo.");
+            System.out.println("2. Mostrar lista de vértices.");
             System.out.println("3. Mostrar matriz de pesos del grafo (por ahora, donde hay una relación se pone 1 y donde no 0). Matriz muy grande, utilizar buscador de consola para encontrar 1.0's");
             System.out.println("4. Salir.");
 
@@ -64,11 +64,6 @@ public class Task {
                     break;
                 case 2:
                     System.out.println(graph.getVertices());
-                    //var list = graph.getVertices().stream().collect(Collectors.groupingBy(Vertex::getLineId));
-                    //list.forEach((lineId, lista) -> {
-                      //  System.out.println(ANSI_CYAN + "Ruta: " + lineId + ANSI_RESET);
-                        //lista.forEach(System.out::println);
-                    //});
                     break;
                 case 3:
                     System.out.println(graph.printMatrix());
@@ -117,29 +112,6 @@ public class Task {
 
                 // We add each line to the arraylist
                 input.add(parts);
-                //System.out.println(Arrays.stream(Arrays.stream(parts).toArray()).toList());
-
-                // Stops by line
-                String stopId = parts[4].trim();
-                String lineId = parts[3].trim();
-
-                stopsWithLines.put(stopId, lineId);
-
-                // Add orientation filter. Lines by orientation
-                // So, it means that is stops by line and orientation. :)
-                int orientation = Integer.parseInt(parts[2].trim());
-                stopsWithOrientations.put(stopId, orientation);
-
-                // Stops by line, orientation and variant
-                // Add another filter and order
-                int variant = Integer.parseInt(parts[6].trim());
-                stopsWithVariants.put(stopId, variant);
-                
-                // Stops by line, orientation, variant and stopsequence
-                // Add another filter and order
-                int stopsequence = Integer.parseInt(parts[1].trim());
-                stopsWithStopSequences.put(stopId, stopsequence);
-                //System.out.println(stopsWithStopSequences);
 
             }
 
@@ -188,7 +160,7 @@ public class Task {
 
                 String stopId = parts[0].trim();
 
-                if(Arrays.asList(nolinestops).contains(stopId)) {
+                if (Arrays.asList(nolinestops).contains(stopId)) {
                     continue;
                 }
 
@@ -205,10 +177,6 @@ public class Task {
                 }
 
                 // We create the stops. Each stop is a vertex.
-                //String lineId = stopsWithLines.get(stopId);
-                //int orientation = stopsWithOrientations.get(stopId);
-                //int variant = stopsWithVariants.get(stopId);
-                //int stopsequence = stopsWithStopSequences.get(stopId);
                 control.createAndAddVertex(graph, name, stopId, x, y);
 
             }
@@ -225,25 +193,8 @@ public class Task {
 
     }
 
-    // This method read linestops file and group by line
-    /*
-    public String sortByConditions() {
-
-            // Hago groupBy por ruta
-            List<Vertex> list = new ArrayList<>();
-            //graph.getVertices().stream().sorted(Comparator.comparing(Vertex::getLineId)
-              //              .thenComparing(Vertex::getOrientation)
-               //             .thenComparing(Vertex::getVariant)
-                //            .thenComparing(Vertex::getStopSequence))
-                  //          .forEach(list::add);
-            graph.setVertexes(list);
-            return "Vertexes sorted ready.";
-
-    }
-     */
-
     // This method create and add edges to the graph
-    public String createAndConnectEdges(){
+    public String createAndConnectEdges() {
         // We create the edge between two vertexes.
         try {
 
@@ -255,11 +206,11 @@ public class Task {
             String variant;
             String stopSequence;
 
-            for(int i = 0; i < input.size()-1; i++) {
+            for (int i = 0; i < input.size() - 1; i++) {
 
                 lineId = input.get(i)[3];
                 stop1Id = input.get(i)[4];
-                stop2Id = input.get(i+1)[4];
+                stop2Id = input.get(i + 1)[4];
                 orientation = input.get(i)[2];
                 variant = input.get(i)[6];
                 stopSequence = input.get(i)[1];
@@ -278,7 +229,55 @@ public class Task {
             return "Edges created and added to the graph unsuccessfully.";
 
         }
-        
+
+    }
+
+    public String readAndCreateLines() {
+
+        String path = "src/main/resources/lines-241.csv";
+        File csv = new File(path);
+
+        try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
+            String line;
+            boolean firstLine = true;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty())
+                    continue;
+
+                // If first line looks like a header, skip it
+                if (firstLine) {
+                    firstLine = false;
+                    String low = line.toLowerCase();
+                    if (low.contains("line_id") || low.contains("lineid") || low.contains("id"))
+                        continue;
+                }
+
+                // Simple CSV split (assumes stable CSV without quoted commas)
+                String[] parts = line.split(",", -1);
+                if (parts.length < 1) {
+                    // Not enough columns — skip line
+                    System.err.println("Skipping malformed line: " + line);
+                    continue;
+                }
+
+
+                String lineId = parts[0].trim();
+                String lineName = parts[2].trim();
+
+                control.createLine(graph, lineId, lineName);
+
+            }
+
+            return "Lines created successfully.";
+
+        } catch (Exception e) {
+
+            System.err.println("Error reading file :" + e.getMessage());
+            e.printStackTrace();
+            return "Lines created unsuccessfully.";
+        }
+
+
     }
 
 }

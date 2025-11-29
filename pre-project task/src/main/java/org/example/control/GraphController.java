@@ -38,4 +38,9 @@ public class GraphController {
         graph.addEdge(lineId, stop1Id, stop2Id, orientation, variant, stopSequence, weight);
     }
 
+    // We create lines for later assign the name associated to a lineId
+    public void createLine(IGraph<Vertex> graph, String lineId, String lineName) {
+        graph.createLine(lineId, lineName);
+    }
+
 }

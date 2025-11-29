@@ -14,4 +14,5 @@ public interface IGraph<Vertex> {
     List<Vertex> getVertices();
     void setVertexes(List<Vertex> vertexes);
     String getEdges();
+    public void createLine(String lineId, String lineName);
 }
