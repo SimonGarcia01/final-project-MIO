@@ -21,6 +21,7 @@ public class GraphImpl implements IGraph<Vertex> {
     private int maxSize;
     private List<String> infoByLine = new ArrayList<>();
     private HashMap<String, String> lines = new HashMap<>();
+    private List<String> temporalLines = new ArrayList<>();
 
     
     //Constructor
@@ -61,8 +62,10 @@ public class GraphImpl implements IGraph<Vertex> {
 
     //Add an edge between two vertices
     int cnt = 0;
+
     @Override
-    public void addEdge(String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
+    public void addEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
+
 
         // Positions in adjacency matriz are in the form: (row, colum)
 
@@ -71,7 +74,7 @@ public class GraphImpl implements IGraph<Vertex> {
         //System.out.println("Index: " + i);
 
         // Column
-        int j = findStopIndexById(stop2Id); // -> y
+        //int j = findStopIndexById(stop2Id); // -> y
 
 
         //System.out.println("Coordenadas: (" + i + ", " + j + ")");
@@ -85,7 +88,8 @@ public class GraphImpl implements IGraph<Vertex> {
 
         // AUN ESTA MAL PORQUE EFECTIVAMENTE ESTA TOMANDO VALORES IGUALES
         // TODO ES PORQUE SE ESTA UNIENDO DE SEGUIDO PERO EL HASHMAP NO TIENE ORDEN
-        if (i == j)
+        //if (i == j)
+            // verificar variante
             //System.out.println(stop1Id);
             //System.out.println(stop2Id);
             //System.out.println(i);
@@ -98,36 +102,48 @@ public class GraphImpl implements IGraph<Vertex> {
          */
 
         // ESTO NO LO ESTA HACIENDO BIEN. OJO
-        matrix[i][j] = 1.0;
+        //matrix[i][j] = 1.0;
         cnt++;
 
-        //System.out.println("A ver: " + matrix[i][j]);
-        //System.out.println("A ver: " + cnt);
+        //System.out.println("LineId: " + lineId);
 
-        // Si la key es diferente se crea una lista.
-        // Se hace una lista por key
-        if(!edges.containsKey(lineId)) {
-            infoByLine = new ArrayList<>();
-            String infoEdge = makeInfoEdge(stop1Id, stop2Id, orientation, variant, stopSequence, weight);
-            // Agrupo toda la informacion de la misma ruta
-            infoByLine.add(infoEdge);
-            edges.put(lineId, infoByLine);
+        String infoEdge = makeInfoEdge(lineId, stop1Id, orientation, variant, stopSequence, weight);
+        infoByLine.add(infoEdge);
+
+    }
+
+    // Auxiliar method
+    public void group() {
+
+        for(int k = 0; k < temporalLines.size(); k++) {
+            List<String> filtered = new ArrayList<>();
+            for(int m = 0; m < infoByLine.size(); m++) {
+
+                if(infoByLine.get(m).split(", ")[0].split(": ")[1].equals(temporalLines.get(k))) {
+                    filtered.add(infoByLine.get(m));
+                }
+
+            }
+
+            edges.put(temporalLines.get(k), filtered);
+
         }
-        else {
-            String infoEdge = makeInfoEdge(stop1Id, stop2Id, orientation, variant, stopSequence, weight);
-            // Agrupo toda la informacion de la misma ruta
-            infoByLine.add(infoEdge);
-            edges.put(lineId, infoByLine);
-        }
+
+        temporalLines.clear();
+
+    }
+
+    public void delete() {
 
     }
 
     // Auxiliar function for avoid duplicity
-    public String makeInfoEdge(String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) {
+    public String makeInfoEdge(String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) {
 
-        String infoEdge = "\nOrigen: " + findNameByStopId(stop1Id);
-        infoEdge += ", Destino: " + findNameByStopId(stop2Id);
-        infoEdge += ", Orientation: " + orientation;
+        String infoEdge = "\nLineId: " + lineId;
+        infoEdge += ", Origen: " + findNameByStopId(stop1Id);
+        //infoEdge += ", Destino: " + findNameByStopId(stop2Id);
+        infoEdge += ", Orientación: " + orientation;
         infoEdge += ", Variante: " + variant;
         infoEdge += ", StopSequence: " + stopSequence;
         infoEdge += ", Peso: " + weight + ";\n";
@@ -234,6 +250,14 @@ public class GraphImpl implements IGraph<Vertex> {
     @Override
     public void createLine(String lineId, String lineName) {
         lines.put(lineId, lineName);
+        temporalLines.add(lineId);
     }
 
+    public HashMap<String, String> getLines() {
+        return lines;
+    }
+
+    public void setLines(HashMap<String, String> lines) {
+        this.lines = lines;
+    }
 }

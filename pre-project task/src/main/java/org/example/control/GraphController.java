@@ -34,13 +34,17 @@ public class GraphController {
     }
 
     // We connect edges between vertexes
-    public void connectEdge(IGraph<Vertex> graph, String lineId, String stop1Id, String stop2Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
-        graph.addEdge(lineId, stop1Id, stop2Id, orientation, variant, stopSequence, weight);
+    public void connectEdge(IGraph<Vertex> graph, String lineId, String stop1Id, String orientation, String variant, String stopSequence, double weight) throws GraphException {
+        graph.addEdge(lineId, stop1Id, orientation, variant, stopSequence, weight);
     }
 
     // We create lines for later assign the name associated to a lineId
     public void createLine(IGraph<Vertex> graph, String lineId, String lineName) {
         graph.createLine(lineId, lineName);
+    }
+
+    public void group(IGraph<Vertex> graph) {
+        graph.group();
     }
 
 }

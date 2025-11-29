@@ -34,14 +34,16 @@ public class Task {
         //System.out.println(task.readStopsAndCreateVertexes());
         task.readStopsAndCreateVertexes();
 
+        // Create lines
+        task.readAndCreateLines();
+
 
         // Create and add edges
         //System.out.println(task.createAndConnectEdges());
         task.createAndConnectEdges();
 
 
-        // Create lines
-        task.readAndCreateLines();
+
 
 
         int option;
@@ -61,6 +63,7 @@ public class Task {
             switch (option) {
                 case 1:
                     System.out.println(graph.getEdges());
+                    //System.out.println(graph.getLines());
                     break;
                 case 2:
                     System.out.println(graph.getVertices());
@@ -205,19 +208,24 @@ public class Task {
             String orientation;
             String variant;
             String stopSequence;
+            int cnt = 0;
 
-            for (int i = 0; i < input.size() - 1; i++) {
+            for (int i = 0; i < input.size(); i++) {
 
                 lineId = input.get(i)[3];
                 stop1Id = input.get(i)[4];
-                stop2Id = input.get(i + 1)[4];
+                //stop2Id = input.get(i + 1)[4];
                 orientation = input.get(i)[2];
                 variant = input.get(i)[6];
                 stopSequence = input.get(i)[1];
 
-                control.connectEdge(graph, lineId, stop1Id, stop2Id, orientation, variant, stopSequence, 1.0);
-
+                control.connectEdge(graph, lineId, stop1Id, orientation, variant, stopSequence, 1.0);
+                cnt++;
             }
+
+            control.group(graph);
+
+            System.out.println("Cnt: " + cnt);
 
 
             return "Edges created and added to the graph successfully";
