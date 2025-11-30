@@ -37,6 +37,7 @@ public class Database {
     }
 
     public void updateArc(int matrixStopId1, int matrixStopId2, double newAverageSpeed, BusUpdate busUpdate) {
+        addStop(matrixStopId1,matrixStopId2, busUpdate.timestamp);
         int averageCounter = graph.getAverageCounter(matrixStopId1,matrixStopId2);
         double oldAvg = graph.getAverageSpeed(matrixStopId1,matrixStopId2);
 
