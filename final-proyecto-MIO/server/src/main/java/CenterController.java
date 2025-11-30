@@ -54,29 +54,34 @@ public class CenterController extends Thread {
 
     public void produceData(Datagram datagram) {
 
-        BusIdDate busIdDate  = database.getLastStop(datagram.busId);
+        if(!(datagram.lineId == -1 || datagram.lineId == 999)) {
 
-        if(busIdDate.lineId != datagram.lineId) {
-            database.restartLocations(datagram.busId);
-        }
+            BusIdDate busIdDate  = database.getLastStop(datagram.busId);
 
-        if(busIdDate == null) {
-            Data data = new Data(
-                    datagram.orientation,
-                    datagram.lineId,
-                    datagram.busId,
-                    datagram.latitude,
-                    datagram.longitude,
-                    datagram.registerDate,
-                    -1,
-                    ""
-            );
+            if(busIdDate.lineId != datagram.lineId) {
+                database.restartLocations(datagram.busId);
+                busIdDate = null;
+            }
 
-            queueManager.enqueueData(data);
+            if(busIdDate == null) {
+                Data data = new Data(
+                        datagram.orientation,
+                        datagram.lineId,
+                        datagram.busId,
+                        datagram.latitude,
+                        datagram.longitude,
+                        datagram.registerDate,
+                        -1,
+                        ""
+                );
 
-        }
-        else {
-            queueManager.enqueueData(transformDatagram(datagram));
+                queueManager.enqueueData(data);
+
+            }
+            else {
+                queueManager.enqueueData(transformDatagram(datagram));
+            }
+
         }
 
     }

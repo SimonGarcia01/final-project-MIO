@@ -56,7 +56,7 @@ public class Database {
     }
 
     public void restartLocations(int busId) {
-        
+        stopsByBus.remove(busId);
     }
 
 }
