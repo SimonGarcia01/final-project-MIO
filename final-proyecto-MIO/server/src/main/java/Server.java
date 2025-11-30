@@ -17,7 +17,7 @@ public class Server {
             QueueManager queueManager = new QueueManager();
 
             CenterController centerController = new CenterController(queueManager, database);
-            //centerController.start();
+            centerController.start();
 
             queueManager.setCenterController(centerController);
 

@@ -3,15 +3,52 @@ import Demo.Data;
 import Demo.Datagram;
 import utils.BusIdDate;
 
-public class CenterController {
+public class CenterController extends Thread {
 
     private final QueueManager queueManager;
     private final Database database;
     private ConnectionImpl connection;
+    private volatile boolean running = true;
 
     public CenterController(QueueManager queue, Database database) {
         this.queueManager = queue;
         this.database = database;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("[CenterController] Thread iniciado.");
+
+        while (running) {
+            try {
+                // Consumir DATA
+                Data data = queueManager.dequeueData();
+                if (data != null) {
+                    consumeData(data);
+                }
+
+                // Consumir ArcUpdates
+                ArcUpdate arcUpdate = queueManager.dequeueArcUpdate();
+                if (arcUpdate != null) {
+                    handleArcUpdate(arcUpdate);
+                }
+
+                //Evita usar 100% CPU
+                Thread.sleep(10);
+
+            } catch (InterruptedException e) {
+                System.out.println("[CenterController] Interrumpido.");
+                running = false;
+            }
+        }
+
+        System.out.println("[CenterController] Thread finalizado.");
+    }
+
+    //Detener hilo (no se usa por ahora)
+    public void stopController() {
+        running = false;
+        this.interrupt();
     }
 
     public void produceData(Datagram datagram) {
@@ -30,18 +67,29 @@ public class CenterController {
 
         //Get the info of the stop before
         BusIdDate busIdDate = database.getLastStop(datagram.busId);
-        data.prevStopId = busIdDate.budId;
-        data.prevStopTime = busIdDate.date;
+        if(busIdDate != null) {
+            data.prevStopId = busIdDate.budId;
+            data.prevStopTime = busIdDate.date;
+        }
 
         return data;
     }
 
-//    public void consumeData() {
-//        Data data = queueManager.dequeueData();
-//        if (data != null) {
-//            database.addStop(data.busId, data.prevStopId);
-//        }
-//    }
+    //Consume Data
+    public void consumeData(Data data) {
+        System.out.println("[CenterController] Consumiendo DATA bus=" + data.busId);
+        database.addStop(data.busId, data.prevStopId, data.prevStopTime);
+    }
+
+    //Consume Arc
+    private void handleArcUpdate(ArcUpdate arcUpdate) {
+        //ArcUpdate arcUpdate = queueManager.dequeueArc Update(); Esta linea no se usa por. arcUpdate se pide como parametro
+        if (arcUpdate.averageSpeed != -1) {
+            System.out.println("[CenterController] Procesando ARC UPDATE");
+            database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus
+            );
+        }
+    }
 
     public void setConnection(ConnectionImpl connection) {
         this.connection = connection;
@@ -55,10 +103,4 @@ public class CenterController {
         return connection;
     }
 
-    public void handleArcUpdate() {
-        ArcUpdate arcUpdate = queueManager.dequeueArcUpdate();
-        if(arcUpdate.averageSpeed != -1){
-            database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId1, arcUpdate.averageSpeed, arcUpdate.bus);
-        }
-    }
 }
