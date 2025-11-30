@@ -19,6 +19,9 @@ public class Client {
             //Make the UI that will print the graph
             UI ui = new UI();
 
+            //Give the UI 10 seconds to make its graph
+            Thread.sleep(10_000);
+
             //Now just get an update every 30 seconds
             while (true) {
                 try {
