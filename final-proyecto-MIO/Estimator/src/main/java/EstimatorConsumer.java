@@ -70,6 +70,7 @@ public class EstimatorConsumer {
 
             int nearestStopid = -1;
 
+            System.out.println("MIRA LLEGA : " + data.lineId);
             for(Vertex v : graph.findEdgesByLineId(String.valueOf(data.lineId))) {
 
                 double prevLat = v.getY();

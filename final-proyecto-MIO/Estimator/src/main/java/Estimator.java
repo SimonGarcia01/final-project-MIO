@@ -54,6 +54,7 @@ public class Estimator {
             try {
                 //Getting data from server
                 Data data = serverConnection.getDequeueData();
+                System.out.println("EY: " + data.lineId);
 
                 //If there is no data, retry
                 if (data == null) {

@@ -20,6 +20,7 @@ public class QueueManager {
     }
 
     public Data dequeueData() {
+        System.out.println("Que tiene esto: " + dataQueue.poll());
         return dataQueue.poll();
     }
 

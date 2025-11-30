@@ -1,5 +1,4 @@
 import Demo.ArcUpdate;
-import Demo.BusUpdate;
 import Demo.Data;
 import Demo.Datagram;
 import utils.BusIdDate;
@@ -23,9 +22,9 @@ public class CenterController extends Thread {
         while (running) {
             try {
                 // Consumir DATA
-                Data data = queueManager.dequeueData();
+                produceData();
                 if (data != null) {
-                    consumeData(data);
+                    addData(data);
                 }
 
                 // Consumir ArcUpdates
@@ -114,11 +113,6 @@ public class CenterController extends Thread {
         return data;
     }
 
-    //Consume Data
-    public void consumeData(Data data) {
-        System.out.println("[CenterController] Consumiendo DATA bus=" + data.busId);
-        database.addStop(data.busId, data.prevStopId, data.lineId, data.prevStopTime);
-    }
 
     //Consume Arc
     private void handleArcUpdate(ArcUpdate arcUpdate) {
