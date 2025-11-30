@@ -58,11 +58,6 @@ public class CenterController extends Thread {
 
             BusIdDate busIdDate  = database.getLastStop(datagram.busId);
 
-            if(busIdDate.lineId != datagram.lineId) {
-                database.restartLocations(datagram.busId);
-                busIdDate = null;
-            }
-
             if(busIdDate == null) {
                 Data data = new Data(
                         datagram.orientation,
@@ -74,9 +69,22 @@ public class CenterController extends Thread {
                         -1,
                         ""
                 );
-
                 queueManager.enqueueData(data);
+            }
+            else if (busIdDate.lineId != datagram.lineId) {
+                database.restartLocations(datagram.busId);
 
+                Data data = new Data(
+                        datagram.orientation,
+                        datagram.lineId,
+                        datagram.busId,
+                        datagram.latitude,
+                        datagram.longitude,
+                        datagram.registerDate,
+                        -1,
+                        ""
+                );
+                queueManager.enqueueData(data);
             }
             else {
                 queueManager.enqueueData(transformDatagram(datagram));

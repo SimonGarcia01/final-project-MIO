@@ -359,11 +359,12 @@ public Vertex findVertexByStopId(String stopId) {
 
         List<Vertex> vertexes = new ArrayList<>();
 
-        for(String elem :  edges.get(lineId)) {
-            String stopId = elem.split(", ")[5].split(": ")[1];
-            Vertex v = findVertexByStopId(stopId);
-            vertexes.add(v);
-        }
+        System.out.println("Linea " + lineId);
+        //for(String elem :  edges.get(lineId)) {
+        //    String stopId = elem.split(", ")[5].split(": ")[1];
+        //    Vertex v = findVertexByStopId(stopId);
+        //    vertexes.add(v);
+        //}
 
         return vertexes;
     }

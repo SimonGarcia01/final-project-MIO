@@ -8,7 +8,15 @@ import java.util.List;
 public class MIO {
     public static void main(String[] args) {
 
-        try (Communicator communicator = Util.initialize(args, "MIO.config")) {
+        if (args.length < 1) {
+            System.err.println("Uso: java -jar MIO.jar <ruta_del_csv>");
+            return;
+        }
+
+        String csvPath = args[0];
+        System.out.println("Leyendo archivo externo: " + csvPath);
+
+        try (Communicator communicator = Util.initialize(new String[]{}, "MIO.config")) {
 
             // Connection to the server
             ConnectionPrx serverconnection = ConnectionPrx.checkedCast(
@@ -20,7 +28,7 @@ public class MIO {
             }
 
             // Read the files
-            List<Datagram> datagrams = DatagramReader.readDatagrams("test.csv");
+            List<Datagram> datagrams = DatagramReader.readDatagrams(csvPath);
 
             // Change the list to the Ice Datagram List
             Datagram[] array = datagrams.toArray(new Datagram[0]);
@@ -30,8 +38,6 @@ public class MIO {
                 System.out.println("Enviando " + datagram.busId);
                 serverconnection.receiveDatagram(datagram);
             }
-
-            //serverconnection.sendDatagrams(array);
 
             System.out.println("Datos enviados correctamente.");
         }

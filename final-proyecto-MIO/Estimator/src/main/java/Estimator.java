@@ -20,7 +20,7 @@ public class Estimator {
         this.serverConnection = serverConnection;
         this.workerPool = Executors.newFixedThreadPool(threads);
         this.graph = GraphCreation.getGraph();
-        System.out.println(graph.getEdges());
+        System.out.println("The graph was created successfully.");
     }
 
     //Main method with server connection and estimator creation
@@ -43,7 +43,7 @@ public class Estimator {
             System.out.println("Creating distance graphs.");
             //Creating estimator and starting estimation process
             Estimator estimator = new Estimator(serverConnection, threads);
-            //estimator.start();
+            estimator.start();
         }
     }
 
