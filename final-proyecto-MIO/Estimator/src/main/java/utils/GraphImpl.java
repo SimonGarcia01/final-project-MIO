@@ -23,7 +23,23 @@ public class GraphImpl{
     private final HashMap<String, String> lines = new HashMap<>();
     private final List<String> temporalLines = new ArrayList<>();
 
+    public String getNextStop(String lineId, String previousStopId){
+        List<String> edge = edges.get(lineId);
+        int count = 0;
+        for(String stop: edge){
+            if(previousStopId.equals(stop.split(",")[5].split(": ")[1])){
+                break;
+            }
+            count++;
+        }
 
+        return edge.get(count+1).split(",")[5].split(": ")[1];
+    }
+
+    public void updateAverageSpeed(int matrixStopId1, int matrixStopId2, double averageSpeed){
+        double historicAverageSpeed = matrix[matrixStopId1][matrixStopId2];
+
+    }
 
     //Constructor
     public GraphImpl(int maxSize) {
@@ -185,6 +201,7 @@ public class GraphImpl{
         infoEdge += ", Orientación: " + orientation;
         infoEdge += ", Variante: " + variant;
         infoEdge += ", StopSequence: " + stopSequence;
+        infoEdge += ", StopId: " + stop1Id;
 
         return infoEdge;
 

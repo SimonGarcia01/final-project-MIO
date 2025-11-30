@@ -7,11 +7,16 @@ import java.util.concurrent.LinkedBlockingQueue; //It's used too because it does
 public class QueueManager {
     private final BlockingQueue<Data> dataQueue = new LinkedBlockingQueue<>();
     private final BlockingQueue<ArcUpdate> arcQueue = new LinkedBlockingQueue<>();
+    private CenterController centerController;
+
+    public void setCenterController(CenterController centerController) {
+        this.centerController = centerController;
+    }
 
     //Data
     public void enqueueData(Data data) {
         System.out.println("[QueueManager] Enqueue DATA bus=" + data.busId); //Debug Line
-        dataQueue.offer(data);
+        dataQueue.add(data);
     }
 
     public Data dequeueData() {
@@ -20,7 +25,9 @@ public class QueueManager {
 
     //ArcUpdate
     public void enqueueArcUpdate(ArcUpdate arc) {
-        arcQueue.offer(arc);
+        System.out.println("[QueueManager] Enqueue ARC UPDATE --> stopId1: " + arc.stopMatrixId1 + "stopId2: " + arc.stopMatrixId2);
+        arcQueue.add(arc);
+        centerController.handleArcUpdate();
     }
 
     public ArcUpdate dequeueArcUpdate() {

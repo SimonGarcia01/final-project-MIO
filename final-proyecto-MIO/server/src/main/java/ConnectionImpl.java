@@ -8,10 +8,12 @@ public class ConnectionImpl implements Connection {
 
     private final CenterController centerController;
     private final Database database;
+    private final QueueManager queueManager;
 
-    public ConnectionImpl(CenterController centerController, Database database) {
+    public ConnectionImpl(CenterController centerController, Database database, QueueManager queueManager) {
         this.centerController = centerController;
         this.database = database;
+        this.queueManager = queueManager;
     }
 
     @Override
@@ -26,42 +28,23 @@ public class ConnectionImpl implements Connection {
 
         for (Datagram d : datagrams) {
             System.out.println("Bus " + d.busId + " stop=" + d.stopId);
-
-            Data data = transformDatagram(d);
-            centerController.produceData(data);
+            centerController.produceData(d);
         }
     }
 
     @Override
     public void receiveDatagram(Datagram datagram, Current current) {
         System.out.println("Bus " + datagram.busId + " stop=" + datagram.stopId);
-
-        Data data = transformDatagram(datagram);
-        centerController.produceData(data);
-    }
-
-    private Data transformDatagram(Datagram datagram) {
-        //Transform Datagram
-        Data data = new Data();
-        data.orientation = datagram.orientation;
-        data.lineId = datagram.lineId;
-        data.busId = datagram.busId;
-        data.latitude = datagram.latitude;
-        data.longitude = datagram.longitude;
-        data.date = datagram.datagramDate;
-        data.prevStopId = datagram.stopId;
-        data.prevStopTime = datagram.registerDate;
-
-        return data;
+        centerController.produceData(datagram);
     }
 
     @Override
     public Data getDequeueData(Current current) {
-        return centerController.getQueueManager().dequeueData();
+        return queueManager.dequeueData();
     }
 
     @Override
     public void receiveArcUpdate(ArcUpdate arcUpdate, Current current) {
-        centerController.processArcUpdates();
+        queueManager.enqueueArcUpdate(arcUpdate);
     }
 }

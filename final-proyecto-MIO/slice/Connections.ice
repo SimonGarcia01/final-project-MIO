@@ -28,7 +28,7 @@ module Demo {
     };
 
     struct BusUpdate {
-        bool orientation;
+        int orientation;
         int lineId;
         int busId;
         string timestamp;

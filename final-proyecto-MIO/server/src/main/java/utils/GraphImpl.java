@@ -23,7 +23,7 @@ public class GraphImpl{
     private final HashMap<String, String> lines = new HashMap<>();
     private final List<String> temporalLines = new ArrayList<>();
 
-
+    private int[][] countMatrix;
 
     //Constructor
     public GraphImpl(int maxSize) {
@@ -33,6 +33,20 @@ public class GraphImpl{
         this.edges = new TreeMap<>();
         // 0.0 is the default number for double.
         this.matrix = new double[maxSize][maxSize];
+        this.countMatrix = new int[maxSize][maxSize];
+    }
+
+    public int getAverageCounter(int matrixStopId1, int matrixStopId2){
+        countMatrix[matrixStopId1][matrixStopId2] = countMatrix[matrixStopId1][matrixStopId2]++;
+        return countMatrix[matrixStopId1][matrixStopId2]-1;
+    }
+
+    public double getAverageSpeed(int matrixStopId1, int matrixStopId2){
+        return matrix[matrixStopId1][matrixStopId2];
+    }
+
+    public void updateAverageSpeed(int matrixStopId1, int matrixStopId2, double newAverageSpeed){
+        matrix[matrixStopId1][matrixStopId2] = newAverageSpeed;
     }
 
     public void setMatrix(double[][] matrix) {
@@ -194,22 +208,6 @@ public class GraphImpl{
 
     }
 
-
-    public void createAdjacencyMatrix(String stop1Id, String stop2Id) {
-
-        // Positions in adjacency matriz are in the form: (row, colum)
-
-        // Row
-        int i = findStopIndexById(stop1Id); // -> x
-        // Column
-        int j = findStopIndexById(stop2Id); // -> y
-
-        if(i != j && matrix[i][j] == 0.0) {
-            matrix[i][j] = 1.0;
-        }
-
-    }
-
     //Remove an edge between two vertices
     public void removeEdge(String Stop1Id, String Stop2Id) {
 
@@ -221,35 +219,6 @@ public class GraphImpl{
 
         matrix[i][j] = 0.0;
     }
-
-    //Remove a vertex
-    public void removeVertex(String StopId) {
-
-        int idx = findStopIndexById(StopId);
-
-        vertices.remove(idx);
-
-        // Shift rows upward
-        for (int r = idx; r < vertices.size(); r++) {
-            matrix[r] = matrix[r + 1];
-        }
-
-        // Shift columns left
-        for (int r = 0; r < vertices.size() + 1; r++) {
-            for (int c = idx; c < vertices.size(); c++) {
-                matrix[r][c] = matrix[r][c + 1];
-            }
-        }
-
-        // Cleanup last row and column
-        int n = vertices.size();
-        for (int i = 0; i < maxSize; i++) {
-            matrix[n][i] = 0.0;
-            matrix[i][n] = 0.0;
-        }
-
-    }
-
 
     public String printMatrix() {
 
@@ -266,10 +235,6 @@ public class GraphImpl{
 
         return String.valueOf(text);
 
-    }
-
-    public List<Vertex> getVertices() {
-        return vertices;
     }
 
     public int findStopIndexById(String id) {

@@ -13,10 +13,15 @@ public class Server {
             Database database = new Database();
             Thread.sleep(1_000);
 
-            CenterController centerController = new CenterController(new QueueManager(), database);
+
+            QueueManager queueManager = new QueueManager();
+
+            CenterController centerController = new CenterController(queueManager, database);
             //centerController.start();
 
-            ConnectionImpl serverConnection = new ConnectionImpl(centerController, database);
+            queueManager.setCenterController(centerController);
+
+            ConnectionImpl serverConnection = new ConnectionImpl(centerController, database, queueManager);
 
             centerController.setConnection(serverConnection);
 
