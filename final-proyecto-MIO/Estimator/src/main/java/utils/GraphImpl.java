@@ -354,4 +354,14 @@ public Vertex findVertexByStopId(String stopId) {
 
         return R * c;  // distance in kms
     }
+
+    // Get first of the list
+    public String getFirst(String lineId) {
+        return edges.get(lineId).get(0);
+    }
+
+    // Get last of the list
+    public String getLast(String lineId) {
+        return edges.get(lineId).get(edges.get(lineId).size()-1);
+    }
 }
