@@ -3,6 +3,8 @@ import Demo.ConnectionPrx;
 import Demo.Data;
 import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.Util;
+import utils.GraphCreation;
+import utils.GraphImpl;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,11 +13,14 @@ public class Estimator {
 
     private final ConnectionPrx serverConnection;
     private final ExecutorService workerPool;
+    private final GraphImpl graph;
 
     //Defines an estimato with a worker/consumer pool
     public Estimator(ConnectionPrx serverConnection, int threads) {
         this.serverConnection = serverConnection;
         this.workerPool = Executors.newFixedThreadPool(threads);
+        this.graph = GraphCreation.getGraph();
+        System.out.println(graph.printMatrix());
     }
 
     //Main method with server connection and estimator creation
@@ -35,9 +40,10 @@ public class Estimator {
             //Quantity of threads based on available processors.
             int threads = Runtime.getRuntime().availableProcessors();
 
+            System.out.println("Creating distance graphs.");
             //Creating estimator and starting estimation process
             Estimator estimator = new Estimator(serverConnection, threads);
-            estimator.start();
+            //estimator.start();
         }
     }
 
@@ -79,5 +85,9 @@ public class Estimator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public GraphImpl getGraph() {
+        return graph;
     }
 }
