@@ -21,12 +21,6 @@ public class CenterController extends Thread {
 
         while (running) {
             try {
-                // Consumir DATA
-                produceData();
-                if (data != null) {
-                    addData(data);
-                }
-
                 // Consumir ArcUpdates
                 ArcUpdate arcUpdate = queueManager.dequeueArcUpdate();
                 if (arcUpdate != null) {
@@ -52,7 +46,6 @@ public class CenterController extends Thread {
     }
 
     public void produceData(Datagram datagram) {
-
         if(!(datagram.lineId == -1 || datagram.lineId == 999)) {
 
             BusIdDate busIdDate  = database.getLastStop(datagram.busId);
@@ -88,9 +81,7 @@ public class CenterController extends Thread {
             else {
                 queueManager.enqueueData(transformDatagram(datagram));
             }
-
         }
-
     }
 
     private Data transformDatagram(Datagram datagram) {
@@ -119,8 +110,7 @@ public class CenterController extends Thread {
         //ArcUpdate arcUpdate = queueManager.dequeueArc Update(); Esta linea no se usa por. arcUpdate se pide como parametro
         if (arcUpdate.averageSpeed != -1) {
             System.out.println("[CenterController] Procesando ARC UPDATE");
-            database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus
-            );
+            database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus);
         }
 
         else {

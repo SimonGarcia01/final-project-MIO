@@ -14,12 +14,14 @@ public class Estimator {
     private final ConnectionPrx serverConnection;
     private final ExecutorService workerPool;
     private final GraphImpl graph;
+    private final ThreadLocal<EstimatorConsumer> consumer;
 
     //Defines an estimato with a worker/consumer pool
     public Estimator(ConnectionPrx serverConnection, int threads) {
         this.serverConnection = serverConnection;
         this.workerPool = Executors.newFixedThreadPool(threads);
         this.graph = GraphCreation.getGraph();
+        this.consumer = ThreadLocal.withInitial(() -> new EstimatorConsumer(graph));
         System.out.println("The graph was created successfully.");
     }
 
@@ -54,7 +56,6 @@ public class Estimator {
             try {
                 //Getting data from server
                 Data data = serverConnection.getDequeueData();
-                System.out.println("EY: " + data.lineId);
 
                 //If there is no data, retry
                 if (data == null) {
@@ -74,8 +75,8 @@ public class Estimator {
     private void processData(Data data) {
         try {
             //Creating consumers and start estimation
-            EstimatorConsumer consumer = new EstimatorConsumer(graph);
-            ArcUpdate update = consumer.estimateArcUpdate(data);
+            EstimatorConsumer c = consumer.get();
+            ArcUpdate update = c.estimateArcUpdate(data);
 
             //Sending results to server
             serverConnection.receiveArcUpdate(update);

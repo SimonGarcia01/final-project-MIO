@@ -13,7 +13,6 @@ public class Server {
             Database database = new Database();
             Thread.sleep(1_000);
 
-
             QueueManager queueManager = new QueueManager();
 
             CenterController centerController = new CenterController(queueManager, database);

@@ -20,8 +20,11 @@ public class QueueManager {
     }
 
     public Data dequeueData() {
-        System.out.println("Que tiene esto: " + dataQueue.poll());
-        return dataQueue.poll();
+        try {
+            return dataQueue.take(); //BLOQUEA hasta que haya data
+        } catch (InterruptedException e) {
+            return null;
+        }
     }
 
     //ArcUpdate
