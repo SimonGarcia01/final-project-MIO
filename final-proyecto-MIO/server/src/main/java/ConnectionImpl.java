@@ -13,7 +13,7 @@ public class ConnectionImpl implements Connection {
     }
 
     @Override
-    public String getUpdatedGraph(Current current) {
+    public double[][] getUpdatedGraph(Current current) {
         System.out.println("Graph requested");
         return centerController.getGraph();
     }

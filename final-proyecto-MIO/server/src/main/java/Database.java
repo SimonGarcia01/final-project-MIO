@@ -8,7 +8,7 @@ public class Database {
     private final Map<Integer, Deque<Integer>> stopsByBus = new HashMap<>();
 
     // Grafo inmutable (por ahora un String)
-    private String graph = "initial graph";
+    private double[][] graph = {{1}};
 
     public void addStop(int busId, int stopId) {
         stopsByBus
@@ -21,11 +21,11 @@ public class Database {
         return (q == null || q.isEmpty()) ? -1 : q.getLast();
     }
 
-    public void setGraph(String g) {
-        this.graph = g;
+    public double[][] getGraph() {
+        return graph;
     }
 
-    public String getGraph() {
-        return graph;
+    public void setGraph(double[][] graph) {
+        this.graph = graph;
     }
 }

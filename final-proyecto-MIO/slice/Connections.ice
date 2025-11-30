@@ -45,10 +45,14 @@ module Demo {
     //List of datagrams
     sequence<Datagram> DatagramSeq;
 
+    //To send the updated adjacency matrix
+    sequence<double> DoubleSeq;
+    sequence<DoubleSeq> DoubleMatrix;
+
     //Server Connection Interface
     interface Connection {
         // The client requests an updated graph
-        string getUpdatedGraph();
+        DoubleMatrix getUpdatedGraph();
 
         //To receive the datagrams
         void sendDatagrams(DatagramSeq datagrams);

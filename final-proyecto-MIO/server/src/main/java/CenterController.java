@@ -33,11 +33,11 @@ public class CenterController {
         }
     }
 
-    public String getGraph() {
+    public double[][] getGraph() {
         return database.getGraph();
     }
 
-    public void setGraph(String graph) {
+    public void setGraph(double[][] graph) {
         database.setGraph(graph);
     }
 

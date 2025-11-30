@@ -23,7 +23,7 @@ public class Client {
             while (true) {
                 try {
                     // Ask the server for the graph
-                    String graph = serverConnection.getUpdatedGraph();
+                    double[][] graph = serverConnection.getUpdatedGraph();
 
                     // Send to UI
                     ui.updateMap(graph);
