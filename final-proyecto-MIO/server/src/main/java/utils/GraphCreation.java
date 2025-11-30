@@ -123,8 +123,8 @@ public class GraphCreation {
                 double y;
 
                 try {
-                    x = Double.parseDouble(parts[4].trim()) / 1e7;
-                    y = Double.parseDouble(parts[5].trim()) / 1e7;
+                    x = Double.parseDouble(parts[6].trim());
+                    y = Double.parseDouble(parts[7].trim());
                 } catch (NumberFormatException nfe) {
                     System.err.println("Skipping line with invalid coordinates: " + line);
                     continue;

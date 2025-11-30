@@ -203,10 +203,10 @@ public class GraphImpl{
         Vertex vi = findVertexByStopId(stop1Id);
         Vertex vj = findVertexByStopId(stop2Id);
 
-        double latvi = vi.getX();
-        double lonvi = vi.getY();
-        double latvj = vj.getX();
-        double lonvj = vj.getY();
+        double latvi = vi.getY();
+        double lonvi = vi.getX();
+        double latvj = vj.getY();
+        double lonvj = vj.getX();
 
 
         if(i != j && matrix[i][j] == 0.0) {

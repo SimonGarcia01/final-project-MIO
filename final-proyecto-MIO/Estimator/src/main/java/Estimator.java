@@ -73,7 +73,7 @@ public class Estimator {
     private void processData(Data data) {
         try {
             //Creating consumers and start estimation
-            EstimatorConsumer consumer = new EstimatorConsumer();
+            EstimatorConsumer consumer = new EstimatorConsumer(graph);
             ArcUpdate update = consumer.estimateArcUpdate(data);
 
             //Sending results to server
@@ -85,9 +85,5 @@ public class Estimator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public GraphImpl getGraph() {
-        return graph;
     }
 }
