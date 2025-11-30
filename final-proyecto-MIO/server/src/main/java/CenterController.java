@@ -33,14 +33,6 @@ public class CenterController {
         }
     }
 
-    public double[][] getGraph() {
-        return database.getGraph();
-    }
-
-    public void setGraph(double[][] graph) {
-        database.setGraph(graph);
-    }
-
     public void setConnection(ConnectionImpl connection) {
         this.connection = connection;
     }

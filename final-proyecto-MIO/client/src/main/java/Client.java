@@ -17,6 +17,7 @@ public class Client {
             System.out.println("Connected to server!");
 
             //Make the UI that will print the graph
+            System.out.println("Creating the Graph.");
             UI ui = new UI();
 
             //Give the UI 10 seconds to make its graph

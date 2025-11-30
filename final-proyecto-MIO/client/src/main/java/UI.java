@@ -7,7 +7,7 @@ public class UI {
 
     public UI (){
         graph = GraphCreation.getGraph();
-        System.out.println(graph.getVerticesSortedMap());
+        System.out.println("Graph created successfully.");
     }
 
     // Called by the client

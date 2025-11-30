@@ -1,7 +1,12 @@
 package utils;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class GraphCreation {
@@ -170,7 +175,7 @@ public class GraphCreation {
 
             }
 
-            //The average speed matrix must start with 0's
+            //The average speed matrix must start in 0's
 //            for(int i = 0; i < input.size()-1; i++) {
 //                stop1Id = input.get(i)[4];
 //                stop2Id = input.get(i + 1)[4];

@@ -7,15 +7,17 @@ import com.zeroc.Ice.Current;
 public class ConnectionImpl implements Connection {
 
     private final CenterController centerController;
+    private final Database database;
 
-    public ConnectionImpl(CenterController centerController) {
+    public ConnectionImpl(CenterController centerController, Database database) {
         this.centerController = centerController;
+        this.database = database;
     }
 
     @Override
     public double[][] getUpdatedGraph(Current current) {
         System.out.println("Graph requested");
-        return centerController.getGraph();
+        return database.returnGraph();
     }
 
     @Override

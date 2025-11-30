@@ -1,3 +1,6 @@
+import utils.GraphCreation;
+import utils.GraphImpl;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -5,10 +8,15 @@ import java.util.Map;
 
 public class Database {
     // Para registrar por qué paradas ha ido pasando cada bus
-    private final Map<Integer, Deque<Integer>> stopsByBus = new HashMap<>();
+    private static final Map<Integer, Deque<Integer>> stopsByBus = new HashMap<>();
 
-    // Grafo inmutable (por ahora un String)
-    private double[][] graph = {{1}};
+    // Grafo inmutable
+    private final GraphImpl graph;
+
+    public Database() {
+        graph = GraphCreation.getGraph();
+        System.out.println("Database created successfully.");
+    }
 
     public void addStop(int busId, int stopId) {
         stopsByBus
@@ -21,11 +29,7 @@ public class Database {
         return (q == null || q.isEmpty()) ? -1 : q.getLast();
     }
 
-    public double[][] getGraph() {
-        return graph;
-    }
-
-    public void setGraph(double[][] graph) {
-        this.graph = graph;
+    public double[][] returnGraph(){
+        return graph.getMatrix();
     }
 }
