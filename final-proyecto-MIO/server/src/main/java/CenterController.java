@@ -1,4 +1,5 @@
 import Demo.ArcUpdate;
+import Demo.BusUpdate;
 import Demo.Data;
 import Demo.Datagram;
 import utils.BusIdDate;
@@ -52,7 +53,32 @@ public class CenterController extends Thread {
     }
 
     public void produceData(Datagram datagram) {
-        queueManager.enqueueData(transformDatagram(datagram));
+
+        BusIdDate busIdDate  = database.getLastStop(datagram.busId);
+
+        if(busIdDate.lineId != datagram.lineId) {
+            database.restartLocations(datagram.busId);
+        }
+
+        if(busIdDate == null) {
+            Data data = new Data(
+                    datagram.orientation,
+                    datagram.lineId,
+                    datagram.busId,
+                    datagram.latitude,
+                    datagram.longitude,
+                    datagram.registerDate,
+                    -1,
+                    ""
+            );
+
+            queueManager.enqueueData(data);
+
+        }
+        else {
+            queueManager.enqueueData(transformDatagram(datagram));
+        }
+
     }
 
     private Data transformDatagram(Datagram datagram) {
@@ -68,7 +94,7 @@ public class CenterController extends Thread {
         //Get the info of the stop before
         BusIdDate busIdDate = database.getLastStop(datagram.busId);
         if(busIdDate != null) {
-            data.prevStopId = busIdDate.budId;
+            data.prevStopId = busIdDate.busId;
             data.prevStopTime = busIdDate.date;
         }
 
@@ -78,7 +104,7 @@ public class CenterController extends Thread {
     //Consume Data
     public void consumeData(Data data) {
         System.out.println("[CenterController] Consumiendo DATA bus=" + data.busId);
-        database.addStop(data.busId, data.prevStopId, data.prevStopTime);
+        database.addStop(data.busId, data.prevStopId, data.lineId, data.prevStopTime);
     }
 
     //Consume Arc
@@ -89,6 +115,11 @@ public class CenterController extends Thread {
             database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus
             );
         }
+
+        else {
+            System.out.println("Skip (Center Controller).");
+        }
+
     }
 
     public void setConnection(ConnectionImpl connection) {

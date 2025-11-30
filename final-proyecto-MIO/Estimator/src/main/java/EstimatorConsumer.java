@@ -17,50 +17,90 @@ public class EstimatorConsumer {
     }
 
     public ArcUpdate estimateArcUpdate(Data data) {
-        Vertex previousVertex = graph.findVertexByStopId(String.valueOf(data.prevStopId));
-        Vertex nextVertex = graph.findVertexByStopId(graph.getNextStop(String.valueOf(data.lineId), previousVertex.getStopId()));
 
-        double prevLat = previousVertex.getY();
-        double prevLon = previousVertex.getX();
-        double nextLat = nextVertex.getY();
-        double nextLon = nextVertex.getX();
+        if(!(data.prevStopId == -1 || data.prevStopTime.isEmpty())) {
 
-        double distance = distanceKm(prevLat, prevLon, nextLat, nextLon);
+            Vertex previousVertex = graph.findVertexByStopId(String.valueOf(data.prevStopId));
+            Vertex nextVertex = graph.findVertexByStopId(graph.getNextStop(String.valueOf(data.lineId), previousVertex.getStopId()));
 
-        int stopMatrixId1 = -1;
-        int stopMatrixId2 = -1;
-        double averageSpeed = -1;
+            double prevLat = previousVertex.getY();
+            double prevLon = previousVertex.getX();
+            double nextLat = nextVertex.getY();
+            double nextLon = nextVertex.getX();
 
-        //Check if the bus is less than 50 meters away from the next stop
-        if(distance < 0.05){
-            LocalDateTime time2 = parseTime(data.date);
-            LocalDateTime time1 = parseTime(data.prevStopTime);
+            double distance = distanceKm(prevLat, prevLon, nextLat, nextLon);
 
-            // Time difference in seconds
-            long seconds = Duration.between(time1, time2).getSeconds();
+            int stopMatrixId1 = -1;
+            int stopMatrixId2 = -1;
+            double averageSpeed = -1;
 
-            // Convert seconds → hours
-            double hours = seconds / 3600.0;
+            //Check if the bus is less than 50 meters away from the next stop
+            if(distance < 0.05){
+                LocalDateTime time2 = parseTime(data.date);
+                LocalDateTime time1 = parseTime(data.prevStopTime);
 
-            // Now compute speed
-            averageSpeed = distance / hours;
+                // Time difference in seconds
+                long seconds = Duration.between(time1, time2).getSeconds();
 
-            stopMatrixId1 = graph.findStopIndexById(previousVertex.getStopId());
-            stopMatrixId2 = graph.findStopIndexById(nextVertex.getStopId());
+                // Convert seconds → hours
+                double hours = seconds / 3600.0;
+
+                // Now compute speed
+                averageSpeed = distance / hours;
+
+                stopMatrixId1 = graph.findStopIndexById(previousVertex.getStopId());
+                stopMatrixId2 = graph.findStopIndexById(nextVertex.getStopId());
+            }
+
+            BusUpdate busUpdate = new BusUpdate(
+                    data.orientation,
+                    data.lineId,
+                    data.busId,
+                    1,
+                    data.date);
+
+            return new ArcUpdate(
+                    stopMatrixId1,
+                    stopMatrixId2,
+                    averageSpeed,
+                    busUpdate
+            );
+        }
+        else {
+
+            int nearestStopid = -1;
+
+            for(Vertex v : graph.findEdgesByLineId(String.valueOf(data.lineId))) {
+
+                double prevLat = v.getY();
+                double prevLon = v.getX();
+                double nextLat = data.latitude;
+                double nextLon = data.longitude;
+
+                double distance = distanceKm(prevLat, prevLon, nextLat, nextLon);
+
+                if(distance < 0.05){
+                    nearestStopid = Integer.parseInt(v.getStopId());
+                    break;
+                }
+
+            }
+
+            BusUpdate busUpdate = new BusUpdate(
+                    data.orientation,
+                    data.lineId,
+                    nearestStopid,
+                    data.busId,
+                    data.date);
+
+            return new ArcUpdate(
+                    -1,
+                    -1,
+                    -2.0,
+                    busUpdate
+            );
         }
 
-        BusUpdate busUpdate = new BusUpdate(
-                data.orientation,
-                data.lineId,
-                data.busId,
-                data.date);
-
-        return new ArcUpdate(
-                stopMatrixId1,
-                stopMatrixId2,
-                averageSpeed,
-                busUpdate
-                );
     }
 
     public LocalDateTime parseTime(String time) {

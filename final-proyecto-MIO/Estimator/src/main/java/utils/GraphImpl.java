@@ -355,13 +355,16 @@ public Vertex findVertexByStopId(String stopId) {
         return R * c;  // distance in kms
     }
 
-    // Get first of the list
-    public String getFirst(String lineId) {
-        return edges.get(lineId).get(0);
-    }
+    public List<Vertex> findEdgesByLineId(String lineId) {
 
-    // Get last of the list
-    public String getLast(String lineId) {
-        return edges.get(lineId).get(edges.get(lineId).size()-1);
+        List<Vertex> vertexes = new ArrayList<>();
+
+        for(String elem :  edges.get(lineId)) {
+            String stopId = elem.split(", ")[5].split(": ")[1];
+            Vertex v = findVertexByStopId(stopId);
+            vertexes.add(v);
+        }
+
+        return vertexes;
     }
 }
