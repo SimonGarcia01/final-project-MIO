@@ -18,7 +18,7 @@ public class Database {
 
     public Database() {
         graph = GraphCreation.getGraph();
-        System.out.println("Database created successfully.");
+        System.out.println("[Database] Database created successfully.");
     }
 
     public void addStop(int busId, int stopId, int lineId, String date) {

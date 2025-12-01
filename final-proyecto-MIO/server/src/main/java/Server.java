@@ -9,7 +9,7 @@ public class Server {
 
             ObjectAdapter adapter = communicator.createObjectAdapter("ConnectionAdapter");
 
-            System.out.println("Starting up the database (Creating graph).");
+            System.out.println("[Server] Starting up the database (Creating graph).");
             Database database = new Database();
             Thread.sleep(1_000);
 
@@ -26,7 +26,7 @@ public class Server {
 
             adapter.add(serverConnection, Util.stringToIdentity("serverconnection"));
 
-            System.out.println("serverconnection - port 1090");
+            System.out.println("[Server] serverconnection - port 1090");
 
             adapter.activate();
 
