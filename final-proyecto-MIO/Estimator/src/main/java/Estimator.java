@@ -9,7 +9,7 @@ import utils.GraphImpl;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-//import java.util.concurrent.atomic.LongAdder; //DEBUGIN IMPORT
+import java.util.concurrent.atomic.LongAdder; //DEBUGIN IMPORT
 
 public class Estimator {
 
@@ -20,11 +20,11 @@ public class Estimator {
     private long lastDataTime = System.currentTimeMillis();
 
     //--DEBUGIN VARIABLES--
-    /*
+
     private final LongAdder totalProcessingTimeNs = new LongAdder();
     private final LongAdder processedCount = new LongAdder();
     private volatile long lastPrint = System.currentTimeMillis();
-     */
+
 
     //Defines an estimato with a worker/consumer pool
     public Estimator(ConnectionPrx serverConnection, int threads) {
@@ -99,7 +99,7 @@ public class Estimator {
             serverConnection.receiveArcUpdate(update);
 
             //DEBUGIN
-            /*
+
             long end = System.nanoTime();
             long duration = end - start;
             //System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
@@ -116,7 +116,7 @@ public class Estimator {
                 System.out.println("[Estimator]-------------------------");
                 lastPrint = now;
             }
-             */
+
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -11,12 +11,12 @@ public class CenterController extends Thread {
     private volatile boolean running = true;
 
     //--VARIABLES PARA DEBUGIN--
-    /*
+
     private long pdTotalTimeNs;
     private long pdLastPrint = System.currentTimeMillis();
     private long auTotalTimeNs;
     private long auLastPrint = System.currentTimeMillis();
-     */
+
 
     public CenterController(QueueManager queue, Database database) {
         this.queueManager = queue;
@@ -54,7 +54,7 @@ public class CenterController extends Thread {
     }
 
     public void produceData(Datagram datagram) {
-        //long start = System.nanoTime(); //DEBUGIN
+        long start = System.nanoTime(); //DEBUGIN
 
         if(!(datagram.lineId == -1 || datagram.lineId == 999)) {
 
@@ -94,7 +94,7 @@ public class CenterController extends Thread {
         }
 
         //--DEBUGIN PROCESSDATA--
-        /*
+
         long end = System.nanoTime();
         pdTotalTimeNs += (end - start);
         long now = System.currentTimeMillis();
@@ -104,7 +104,7 @@ public class CenterController extends Thread {
             System.out.println("[CenterController.produceData] ----------------------------");
             pdLastPrint = now;
         }
-         */
+
     }
 
     private Data transformDatagram(Datagram datagram) {
@@ -130,7 +130,7 @@ public class CenterController extends Thread {
 
     //Consume Arc
     private void handleArcUpdate(ArcUpdate arcUpdate) {
-        //long start = System.nanoTime(); //DEBUGIN
+        long start = System.nanoTime(); //DEBUGIN
 
         if (arcUpdate.averageSpeed != -1) {
             //System.out.println("[CenterController.handleArcUpdate] Processing ARC UPDATE");
@@ -141,7 +141,7 @@ public class CenterController extends Thread {
         }
 
         //--DEBUGING ARCUPDATE--
-        /*
+
         long end = System.nanoTime();
         auTotalTimeNs += (end - start);
         long now = System.currentTimeMillis();
@@ -151,7 +151,7 @@ public class CenterController extends Thread {
             System.out.println("[CenterController.handleArcUpdate] ----------------------------");
             auLastPrint = now;
         }
-        */
+
     }
 
     public void setConnection(ConnectionImpl connection) {
