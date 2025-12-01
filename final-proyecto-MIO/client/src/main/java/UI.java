@@ -1,13 +1,15 @@
-    import utils.GraphCreation;
+import utils.GraphCreation;
 import utils.GraphImpl;
 
-    import java.time.LocalDate;
 
-    public class UI {
+public class UI {
 
     private GraphImpl graph;
+    long startTime;
+    long endTime;
 
-    public UI (){
+    public UI () {
+        startTime = System.currentTimeMillis();
         graph = GraphCreation.getGraph();
         System.out.println("Graph created successfully.");
     }
@@ -19,6 +21,10 @@ import utils.GraphImpl;
         System.out.println("Received updated graph from server:");
         System.out.println(newGraph);
         System.out.println("-------------------------------");
+        endTime = System.currentTimeMillis();
+        System.out.println("Latency: "  + (endTime - startTime));
     }
+
+
 }
 
