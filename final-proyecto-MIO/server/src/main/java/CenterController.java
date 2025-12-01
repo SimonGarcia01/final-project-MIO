@@ -1,5 +1,4 @@
 import Demo.ArcUpdate;
-import Demo.BusUpdate;
 import Demo.Data;
 import Demo.Datagram;
 import utils.BusIdDate;
@@ -22,12 +21,6 @@ public class CenterController extends Thread {
 
         while (running) {
             try {
-                // Consumir DATA
-                Data data = queueManager.dequeueData();
-                if (data != null) {
-                    consumeData(data);
-                }
-
                 // Consumir ArcUpdates
                 ArcUpdate arcUpdate = queueManager.dequeueArcUpdate();
                 if (arcUpdate != null) {
@@ -53,7 +46,7 @@ public class CenterController extends Thread {
     }
 
     public void produceData(Datagram datagram) {
-
+        long start = System.nanoTime();
         if(!(datagram.lineId == -1 || datagram.lineId == 999)) {
 
             BusIdDate busIdDate  = database.getLastStop(datagram.busId);
@@ -89,9 +82,10 @@ public class CenterController extends Thread {
             else {
                 queueManager.enqueueData(transformDatagram(datagram));
             }
-
         }
 
+        long end = System.nanoTime();
+        System.out.println("[CenterController.produceData] Processing Time: " + (end - start) / 1000000.0 + "ms");
     }
 
     private Data transformDatagram(Datagram datagram) {
@@ -114,25 +108,21 @@ public class CenterController extends Thread {
         return data;
     }
 
-    //Consume Data
-    public void consumeData(Data data) {
-        System.out.println("[CenterController] Consumiendo DATA bus=" + data.busId);
-        database.addStop(data.busId, data.prevStopId, data.lineId, data.prevStopTime);
-    }
 
     //Consume Arc
     private void handleArcUpdate(ArcUpdate arcUpdate) {
+        long start = System.nanoTime();
         //ArcUpdate arcUpdate = queueManager.dequeueArc Update(); Esta linea no se usa por. arcUpdate se pide como parametro
         if (arcUpdate.averageSpeed != -1) {
-            System.out.println("[CenterController] Procesando ARC UPDATE");
-            database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus
-            );
+            System.out.println("[CenterController.handleArcUpdate] Processing ARC UPDATE");
+            database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus);
         }
 
         else {
-            System.out.println("Skip (Center Controller).");
+            System.out.println("[CenterController.handleArcUpdate] Skip.");
         }
-
+        long end = System.nanoTime();
+        System.out.println("[CenterController.handleArcUpdate] Processing Time: " + (end - start) / 1000000.0 + "ms");
     }
 
     public void setConnection(ConnectionImpl connection) {

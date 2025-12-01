@@ -18,24 +18,23 @@ public class ConnectionImpl implements Connection {
 
     @Override
     public double[][] getUpdatedGraph(Current current) {
-        System.out.println("Graph requested");
-        System.out.println("Graph requested at " + System.currentTimeMillis());
+        System.out.println("[ConnectionImpl] Graph requested");
         return database.returnGraph();
     }
 
     @Override
     public void sendDatagrams(Datagram[] datagrams, Current current) {
-        System.out.println("Recibidos " + datagrams.length + " datagramas:");
+        System.out.println("[ConnectionImpl.sendDatagrams] Received " + datagrams.length + " datagrams:");
 
         for (Datagram d : datagrams) {
-            System.out.println("Bus " + d.busId + " stop=" + d.stopId);
+            System.out.println("[ConnectionImpl.sendDatagram] Sending Bus " + d.busId + " stop=" + d.stopId);
             centerController.produceData(d);
         }
     }
 
     @Override
     public void receiveDatagram(Datagram datagram, Current current) {
-        System.out.println("Bus " + datagram.busId + " stop=" + datagram.stopId);
+        System.out.println("[ConnectionImpl.receiveDatagram] Received Bus " + datagram.busId + " stop=" + datagram.stopId);
         centerController.produceData(datagram);
     }
 

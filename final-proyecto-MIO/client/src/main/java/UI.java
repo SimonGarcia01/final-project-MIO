@@ -1,22 +1,32 @@
+import utils.GraphCreation;
 import utils.GraphImpl;
+
 
 public class UI {
 
-    private final GraphImpl graph;
+    private GraphImpl graph;
+    long startTime;
+    long endTime;
 
-    public UI() {
-        this.graph = utils.GraphCreation.getGraph();
+    public UI () {
+        startTime = System.currentTimeMillis();
+        graph = GraphCreation.getGraph();
         System.out.println("Graph created successfully.");
     }
 
-    // Called by the client when server sends updated matrix
-    // synchronized so callers can't see a half-updated state
-    public synchronized void updateMap(double[][] newMatrix) {
-        graph.setMatrix(newMatrix);
-        // only print when a new matrix arrives (no spam)
-        System.out.println("\n[SERVER] Updated adjacency matrix received.");
-        System.out.println("-------------------------------------------");
+    // Called by the client
+    public void updateMap(double[][] newGraph) {
+        // For now, just print it
+        graph.setMatrix(newGraph);
+        System.out.println("Received updated graph from server:");
+        System.out.println(newGraph);
+        System.out.println("-------------------------------");
+        endTime = System.currentTimeMillis();
+        System.out.println("Latency: "  + (endTime - startTime));
     }
+
+
+}
 
     // Needed so the input thread can access the graph
     public GraphImpl getGraph() {

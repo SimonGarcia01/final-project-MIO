@@ -18,7 +18,7 @@ public class EstimatorConsumer {
 
     public ArcUpdate estimateArcUpdate(Data data) {
 
-        if(!(data.prevStopId == -1 || data.prevStopTime.isEmpty())) {
+        if(data.prevStopId != -1 && !data.prevStopTime.isEmpty()) {
 
             Vertex previousVertex = graph.findVertexByStopId(String.valueOf(data.prevStopId));
             Vertex nextVertex = graph.findVertexByStopId(graph.getNextStop(String.valueOf(data.lineId), previousVertex.getStopId()));

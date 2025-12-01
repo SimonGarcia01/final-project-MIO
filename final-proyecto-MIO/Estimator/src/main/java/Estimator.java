@@ -14,13 +14,15 @@ public class Estimator {
     private final ConnectionPrx serverConnection;
     private final ExecutorService workerPool;
     private final GraphImpl graph;
+    private final ThreadLocal<EstimatorConsumer> consumer;
 
     //Defines an estimato with a worker/consumer pool
     public Estimator(ConnectionPrx serverConnection, int threads) {
         this.serverConnection = serverConnection;
         this.workerPool = Executors.newFixedThreadPool(threads);
         this.graph = GraphCreation.getGraph();
-        System.out.println("The graph was created successfully.");
+        this.consumer = ThreadLocal.withInitial(() -> new EstimatorConsumer(graph));
+        System.out.println("[Estimator] The graph was created successfully.");
     }
 
     //Main method with server connection and estimator creation
@@ -35,12 +37,12 @@ public class Estimator {
                 throw new Error("No server connection!");
             }
 
-            System.out.println("Connected to server!");
+            System.out.println("[Estimator] Connected to server!");
 
             //Quantity of threads based on available processors.
             int threads = Runtime.getRuntime().availableProcessors();
 
-            System.out.println("Creating distance graphs.");
+            System.out.println("[Estimator] Creating distance graphs.");
             //Creating estimator and starting estimation process
             Estimator estimator = new Estimator(serverConnection, threads);
             estimator.start();
@@ -48,7 +50,7 @@ public class Estimator {
     }
 
     public void start() {
-        System.out.println("Estimator started. Waiting for Data...");
+        System.out.println("[Estiamtor] Estimator started. Waiting for Data...");
 
         while (true) {
             try {
@@ -57,7 +59,7 @@ public class Estimator {
 
                 //If there is no data, retry
                 if (data == null) {
-                    System.out.println("No data received. Retrying...");
+                    System.out.println("[Estimator] No data received. Retrying...");
                     continue;
                 }
 
@@ -71,16 +73,19 @@ public class Estimator {
     }
 
     private void processData(Data data) {
+        long start = System.nanoTime();
         try {
             //Creating consumers and start estimation
-            EstimatorConsumer consumer = new EstimatorConsumer(graph);
-            ArcUpdate update = consumer.estimateArcUpdate(data);
+            EstimatorConsumer c = consumer.get();
+            ArcUpdate update = c.estimateArcUpdate(data);
 
             //Sending results to server
             serverConnection.receiveArcUpdate(update);
 
-            System.out.println("ArcUpdate processed by thread " +
-                    Thread.currentThread().getName());
+            System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
+
+            long end = System.nanoTime();
+            System.out.println("[Estimator] processing time: " + (end - start) / 1000000.0 + "ms");
 
         } catch (Exception e) {
             e.printStackTrace();

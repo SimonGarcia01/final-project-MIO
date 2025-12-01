@@ -33,12 +33,13 @@ public class GraphImpl{
             count++;
         }
 
+        if (count + 1 >= edge.size()) return null;
         return edge.get(count+1).split(",")[5].split(": ")[1];
     }
 
     public void updateAverageSpeed(int matrixStopId1, int matrixStopId2, double averageSpeed){
         double historicAverageSpeed = matrix[matrixStopId1][matrixStopId2];
-
+        matrix[matrixStopId1][matrixStopId2] = averageSpeed;
     }
 
     //Constructor
@@ -359,12 +360,11 @@ public Vertex findVertexByStopId(String stopId) {
 
         List<Vertex> vertexes = new ArrayList<>();
 
-        System.out.println("Linea " + lineId);
-        //for(String elem :  edges.get(lineId)) {
-        //    String stopId = elem.split(", ")[5].split(": ")[1];
-        //    Vertex v = findVertexByStopId(stopId);
-        //    vertexes.add(v);
-        //}
+        for(String elem :  edges.get(lineId)) {
+            String stopId = elem.split(", ")[5].split(": ")[1];
+            Vertex v = findVertexByStopId(stopId);
+            vertexes.add(v);
+        }
 
         return vertexes;
     }

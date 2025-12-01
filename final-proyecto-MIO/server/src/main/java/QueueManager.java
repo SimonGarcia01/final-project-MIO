@@ -15,12 +15,15 @@ public class QueueManager {
 
     //Data
     public void enqueueData(Data data) {
-        System.out.println("[QueueManager] Enqueue DATA bus=" + data.busId); //Debug Line
         dataQueue.add(data);
     }
 
     public Data dequeueData() {
-        return dataQueue.poll();
+        try {
+            return dataQueue.take();
+        } catch (InterruptedException e) {
+            return null;
+        }
     }
 
     //ArcUpdate
