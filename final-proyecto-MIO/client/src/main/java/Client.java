@@ -3,37 +3,43 @@ import com.zeroc.Ice.Util;
 import Demo.ConnectionPrx;
 
 public class Client {
+
     public static void main(String[] args) {
-        try(Communicator communicator = Util.initialize(args, "client.config")){
-            //Connecting to the server
+
+        try (Communicator communicator = Util.initialize(args, "client.config")) {
+
             ConnectionPrx serverConnection = ConnectionPrx.checkedCast(
                     communicator.propertyToProxy("serverconnection.Proxy")
             );
 
-            if(serverConnection==null){
+            if (serverConnection == null) {
                 throw new Error("No server connection!");
             }
 
             System.out.println("Connected to server!");
 
-            //Make the UI that will print the graph
+            // Create UI (initial graph)
             System.out.println("Creating the Graph.");
             UI ui = new UI();
 
-            //Give the UI 10 seconds to make its graph
-            Thread.sleep(10_000);
+            // Start input thread (non-blocking)
+            Thread inputThread = new Thread(new LineInspector(ui.getGraph()));
+            inputThread.setDaemon(true); // won't prevent program from closing
+            inputThread.start();
 
-            //Now just get an update every 30 seconds
+            // Give UI time to generate graph
+            Thread.sleep(5_000);
+
+            // Update loop every 30 sec
             while (true) {
                 try {
-                    // Ask the server for the graph
-                    double[][] graph = serverConnection.getUpdatedGraph();
+                    double[][] graphMatrix = serverConnection.getUpdatedGraph();
 
-                    // Send to UI
-                    ui.updateMap(graph);
+                    // Send new matrix to UI
+                    ui.updateMap(graphMatrix);
 
-                    // Wait 30 seconds
-                    Thread.sleep(30_000);
+                    Thread.sleep(30_000); // wait 30 seconds
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     break;
@@ -42,7 +48,7 @@ public class Client {
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
