@@ -27,14 +27,15 @@ public class ConnectionImpl implements Connection {
         System.out.println("[ConnectionImpl.sendDatagrams] Received " + datagrams.length + " datagrams:");
 
         for (Datagram d : datagrams) {
-            System.out.println("[ConnectionImpl.sendDatagram] Sending Bus " + d.busId + " stop=" + d.stopId);
+            //System.out.println("[ConnectionImpl.sendDatagram] Sending Bus " + d.busId + " stop=" + d.stopId);
             centerController.produceData(d);
         }
+        System.out.println("[ConnectionImpl.sendDatagrams] All datagrams sent.");
     }
 
     @Override
     public void receiveDatagram(Datagram datagram, Current current) {
-        System.out.println("[ConnectionImpl.receiveDatagram] Received Bus " + datagram.busId + " stop=" + datagram.stopId);
+        //System.out.println("[ConnectionImpl.receiveDatagram] Received Bus " + datagram.busId + " stop=" + datagram.stopId);
         centerController.produceData(datagram);
     }
 

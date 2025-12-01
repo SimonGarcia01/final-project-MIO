@@ -9,12 +9,19 @@ import utils.GraphImpl;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import java.util.concurrent.atomic.AtomicLong; //DEBUGIN IMPORT
+
 public class Estimator {
 
     private final ConnectionPrx serverConnection;
     private final ExecutorService workerPool;
     private final GraphImpl graph;
     private final ThreadLocal<EstimatorConsumer> consumer;
+
+    //--DEBUGIN VARIABLES--
+    private final AtomicLong totalProcessingTimeNs = new AtomicLong(0);
+    private final AtomicLong processedCount = new AtomicLong(0);
+    private volatile long lastPrint = System.currentTimeMillis();
 
     //Defines an estimato with a worker/consumer pool
     public Estimator(ConnectionPrx serverConnection, int threads) {
@@ -73,7 +80,8 @@ public class Estimator {
     }
 
     private void processData(Data data) {
-        long start = System.nanoTime();
+        long start = System.nanoTime(); //DEBUGIN
+
         try {
             //Creating consumers and start estimation
             EstimatorConsumer c = consumer.get();
@@ -82,10 +90,25 @@ public class Estimator {
             //Sending results to server
             serverConnection.receiveArcUpdate(update);
 
-            System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
-
+            //DEBUGIN
             long end = System.nanoTime();
-            System.out.println("[Estimator] processing time: " + (end - start) / 1000000.0 + "ms");
+            long duration = end - start;
+            //System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
+            //System.out.println("[Estimator] processing time: " + (end - start) / 1000000.0 + "ms");
+            totalProcessingTimeNs.addAndGet(duration);
+            long count = processedCount.incrementAndGet();
+            long now = System.currentTimeMillis();
+            if (now - lastPrint >= 10_000) {
+
+                long totalMs = totalProcessingTimeNs.get() / 1_000_000;
+
+                System.out.println("[Estimator] ----- REPORT (10s) -----");
+                System.out.println("[Estimator] Processed Data: " + count);
+                System.out.println("[Estimator] Acumulated Time: " + totalMs + " ms");
+                System.out.println("-----------------------------------------");
+
+                lastPrint = now;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,6 +8,7 @@ import java.util.List;
 public class MIO {
     public static void main(String[] args) {
         long start = System.nanoTime();
+        int count = 0;
 
         if (args.length < 1) {
             System.err.println("[MIO] No file route added: java -jar MIO.jar <csv file route>");
@@ -36,13 +37,15 @@ public class MIO {
 
             //Send the datagrams
             for(Datagram datagram : array){
-                System.out.println("[MIO] Sending " + datagram.busId);
+                //System.out.println("[MIO] Sending " + datagram.busId);
                 serverconnection.receiveDatagram(datagram);
+                count++;
             }
 
             System.out.println("[MIO] Data successfully sent.");
         }
         long end = System.nanoTime();
+        System.out.println("[MIO] Sent "+count+" datagrams.");
         System.out.println("[MIO] Processing Time: " + (end - start) / 1000000.0 + "ms");
     }
 }

@@ -10,6 +10,16 @@ public class CenterController extends Thread {
     private ConnectionImpl connection;
     private volatile boolean running = true;
 
+    //--VARIABLES PARA DEBUGIN--
+    private long loopCount = 0;
+    private long lastLoopPrint = System.currentTimeMillis();
+    private long pdTotalTimeNs = 0;
+    private long pdOperations = 0;
+    private long pdLastPrint = System.currentTimeMillis();
+    private long auTotalTimeNs = 0;
+    private long auOperations = 0;
+    private long auLastPrint = System.currentTimeMillis();
+
     public CenterController(QueueManager queue, Database database) {
         this.queueManager = queue;
         this.database = database;
@@ -21,6 +31,14 @@ public class CenterController extends Thread {
 
         while (running) {
             try {
+                //--RUN DEBUGIN--
+                loopCount++;
+                long now = System.currentTimeMillis();
+                if (now - lastLoopPrint >= 10000) { // 10 segundos
+                    System.out.println("[CenterController] Iteraciones: " + loopCount);
+                    lastLoopPrint = now;
+                }
+
                 // Consumir ArcUpdates
                 ArcUpdate arcUpdate = queueManager.dequeueArcUpdate();
                 if (arcUpdate != null) {
@@ -46,7 +64,8 @@ public class CenterController extends Thread {
     }
 
     public void produceData(Datagram datagram) {
-        long start = System.nanoTime();
+        long start = System.nanoTime(); //DEBUGIN
+
         if(!(datagram.lineId == -1 || datagram.lineId == 999)) {
 
             BusIdDate busIdDate  = database.getLastStop(datagram.busId);
@@ -84,8 +103,17 @@ public class CenterController extends Thread {
             }
         }
 
+        //--DEBUGIN PROCESSDATA--
         long end = System.nanoTime();
-        System.out.println("[CenterController.produceData] Processing Time: " + (end - start) / 1000000.0 + "ms");
+        pdTotalTimeNs += (end - start);
+        pdOperations++;
+        long now = System.currentTimeMillis();
+        if (now - pdLastPrint >= 10000) { // 10 segundos
+            System.out.println("[CenterController.produceData] Acumulado(ms): " + (pdTotalTimeNs / 1_000_000.0));
+            pdTotalTimeNs = 0;
+            pdOperations = 0;
+            pdLastPrint = now;
+        }
     }
 
     private Data transformDatagram(Datagram datagram) {
@@ -111,8 +139,8 @@ public class CenterController extends Thread {
 
     //Consume Arc
     private void handleArcUpdate(ArcUpdate arcUpdate) {
-        long start = System.nanoTime();
-        //ArcUpdate arcUpdate = queueManager.dequeueArc Update(); Esta linea no se usa por. arcUpdate se pide como parametro
+        long start = System.nanoTime(); //DEBUGIN
+
         if (arcUpdate.averageSpeed != -1) {
             System.out.println("[CenterController.handleArcUpdate] Processing ARC UPDATE");
             database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus);
@@ -121,8 +149,18 @@ public class CenterController extends Thread {
         else {
             System.out.println("[CenterController.handleArcUpdate] Skip.");
         }
+
+        //--DEBUGING ARCUPDATE--
         long end = System.nanoTime();
-        System.out.println("[CenterController.handleArcUpdate] Processing Time: " + (end - start) / 1000000.0 + "ms");
+        auTotalTimeNs += (end - start);
+        auOperations++;
+        long now = System.currentTimeMillis();
+        if (now - auLastPrint >= 10000) { // 10 segundos
+            System.out.println("[CenterController.handleArcUpdate] Acumulado(ms): " + (auTotalTimeNs / 1_000_000.0));
+            auTotalTimeNs = 0;
+            auOperations = 0;
+            auLastPrint = now;
+        }
     }
 
     public void setConnection(ConnectionImpl connection) {
