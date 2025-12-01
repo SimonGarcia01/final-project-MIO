@@ -28,7 +28,6 @@ public class QueueManager {
 
     //ArcUpdate
     public void enqueueArcUpdate(ArcUpdate arc) {
-        System.out.println("[QueueManager] Enqueue ARC UPDATE --> stopId1: " + arc.stopMatrixId1 + " stopId2: " + arc.stopMatrixId2);
         arcQueue.add(arc);
     }
 

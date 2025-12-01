@@ -142,10 +142,9 @@ public class CenterController extends Thread {
         long start = System.nanoTime(); //DEBUGIN
 
         if (arcUpdate.averageSpeed != -1) {
-            System.out.println("[CenterController.handleArcUpdate] Processing ARC UPDATE");
+            //System.out.println("[CenterController.handleArcUpdate] Processing ARC UPDATE");
             database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus);
         }
-
         else {
             System.out.println("[CenterController.handleArcUpdate] Skip.");
         }
