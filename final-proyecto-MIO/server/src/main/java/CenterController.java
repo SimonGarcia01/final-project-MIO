@@ -11,13 +11,9 @@ public class CenterController extends Thread {
     private volatile boolean running = true;
 
     //--VARIABLES PARA DEBUGIN--
-    private long loopCount = 0;
-    private long lastLoopPrint = System.currentTimeMillis();
-    private long pdTotalTimeNs = 0;
-    private long pdOperations = 0;
+    private long pdTotalTimeNs;
     private long pdLastPrint = System.currentTimeMillis();
-    private long auTotalTimeNs = 0;
-    private long auOperations = 0;
+    private long auTotalTimeNs;
     private long auLastPrint = System.currentTimeMillis();
 
     public CenterController(QueueManager queue, Database database) {
@@ -98,12 +94,11 @@ public class CenterController extends Thread {
         //--DEBUGIN PROCESSDATA--
         long end = System.nanoTime();
         pdTotalTimeNs += (end - start);
-        pdOperations++;
         long now = System.currentTimeMillis();
-        if (now - pdLastPrint >= 10000) { // 10 segundos
-            System.out.println("[CenterController.produceData] Acumulado(ms): " + (pdTotalTimeNs / 1_000_000.0));
-            pdTotalTimeNs = 0;
-            pdOperations = 0;
+        if (now - pdLastPrint >= 30000) { // 30 segundos
+            System.out.println("[CenterController.produceData] ------- REPORT (30s) -------");
+            System.out.println("[CenterController.produceData] Acumulated(ms): " + (pdTotalTimeNs / 1_000_000));
+            System.out.println("[CenterController.produceData] ----------------------------");
             pdLastPrint = now;
         }
     }
@@ -144,12 +139,11 @@ public class CenterController extends Thread {
         //--DEBUGING ARCUPDATE--
         long end = System.nanoTime();
         auTotalTimeNs += (end - start);
-        auOperations++;
         long now = System.currentTimeMillis();
-        if (now - auLastPrint >= 10000) { // 10 segundos
-            System.out.println("[CenterController.handleArcUpdate] Acumulado(ms): " + (auTotalTimeNs / 1_000_000.0));
-            auTotalTimeNs = 0;
-            auOperations = 0;
+        if (now - auLastPrint >= 30000) { // 30 segundos
+            System.out.println("[CenterController.handleArcUpdate] ------- REPORT (30s) -------");
+            System.out.println("[CenterController.handleArcUpdate] Acumulated(ms): " + (auTotalTimeNs / 1_000_000));
+            System.out.println("[CenterController.handleArcUpdate] ----------------------------");
             auLastPrint = now;
         }
     }

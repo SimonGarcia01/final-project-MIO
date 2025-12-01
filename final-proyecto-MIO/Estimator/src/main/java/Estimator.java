@@ -9,7 +9,7 @@ import utils.GraphImpl;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import java.util.concurrent.atomic.AtomicLong; //DEBUGIN IMPORT
+import java.util.concurrent.atomic.LongAdder; //DEBUGIN IMPORT
 
 public class Estimator {
 
@@ -17,10 +17,11 @@ public class Estimator {
     private final ExecutorService workerPool;
     private final GraphImpl graph;
     private final ThreadLocal<EstimatorConsumer> consumer;
+    private long lastDataTime = System.currentTimeMillis();
 
     //--DEBUGIN VARIABLES--
-    private final AtomicLong totalProcessingTimeNs = new AtomicLong(0);
-    private final AtomicLong processedCount = new AtomicLong(0);
+    private final LongAdder totalProcessingTimeNs = new LongAdder();
+    private final LongAdder processedCount = new LongAdder();
     private volatile long lastPrint = System.currentTimeMillis();
 
     //Defines an estimato with a worker/consumer pool
@@ -57,21 +58,27 @@ public class Estimator {
     }
 
     public void start() {
-        System.out.println("[Estiamtor] Estimator started. Waiting for Data...");
+        System.out.println("[Estimator] Estimator started. Waiting for Data...");
 
         while (true) {
             try {
                 //Getting data from server
                 Data data = serverConnection.getDequeueData();
 
-                //If there is no data, retry
-                if (data == null) {
-                    System.out.println("[Estimator] No data received. Retrying...");
-                    continue;
+
+                if (data != null) {
+                    lastDataTime = System.currentTimeMillis();
+                    workerPool.submit(() -> processData(data));
                 }
 
-                //Sending data to thread pool
-                workerPool.submit(() -> processData(data));
+                //If there is no data, retry
+                long now = System.currentTimeMillis();
+                if (now - lastDataTime >= 10_000) { // 10s sin datos
+                    System.out.println("[Estimator] No new data received for 10 seconds. Retrying");
+                    lastDataTime = now; // reset para la próxima pausa
+                }
+                Thread.sleep(100); // evitar 100% CPU
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -95,15 +102,16 @@ public class Estimator {
             long duration = end - start;
             //System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
             //System.out.println("[Estimator] processing time: " + (end - start) / 1000000.0 + "ms");
-            totalProcessingTimeNs.addAndGet(duration);
-            long count = processedCount.incrementAndGet();
+            totalProcessingTimeNs.add(duration);
+            processedCount.increment();
             long now = System.currentTimeMillis();
-            if (now - lastPrint >= 10_000) {
-                long totalMs = totalProcessingTimeNs.get() / 1_000_000;
-                System.out.println("[Estimator] ----- REPORT (10s) -----");
+            if (now - lastPrint >= 30_000) {
+                long totalMs = totalProcessingTimeNs.sum() / 1_000_000;
+                long count = processedCount.sum();
+                System.out.println("[Estimator] ----- REPORT (30s) -----");
                 System.out.println("[Estimator] Processed Data: " + count);
-                System.out.println("[Estimator] Acumulated Time: " + totalMs + " ms");
-                System.out.println("-----------------------------------------");
+                System.out.println("[Estimator] Accumulated Time: " + totalMs + " ms");
+                System.out.println("[Estimator]-------------------------");
                 lastPrint = now;
             }
 
