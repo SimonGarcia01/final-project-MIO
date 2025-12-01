@@ -69,6 +69,9 @@ public class Estimator {
                     System.out.println("[Estimator] No data received. Retrying...");
                     continue;
                 }
+                else {
+                    System.out.println("[Estimator] Data received!");
+                }
 
                 //Sending data to thread pool
                 workerPool.submit(() -> processData(data));
@@ -99,9 +102,7 @@ public class Estimator {
             long count = processedCount.incrementAndGet();
             long now = System.currentTimeMillis();
             if (now - lastPrint >= 10_000) {
-
                 long totalMs = totalProcessingTimeNs.get() / 1_000_000;
-
                 System.out.println("[Estimator] ----- REPORT (10s) -----");
                 System.out.println("[Estimator] Processed Data: " + count);
                 System.out.println("[Estimator] Acumulated Time: " + totalMs + " ms");

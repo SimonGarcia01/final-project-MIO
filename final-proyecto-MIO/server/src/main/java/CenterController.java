@@ -31,14 +31,6 @@ public class CenterController extends Thread {
 
         while (running) {
             try {
-                //--RUN DEBUGIN--
-                loopCount++;
-                long now = System.currentTimeMillis();
-                if (now - lastLoopPrint >= 10000) { // 10 segundos
-                    System.out.println("[CenterController] Iteraciones: " + loopCount);
-                    lastLoopPrint = now;
-                }
-
                 // Consumir ArcUpdates
                 ArcUpdate arcUpdate = queueManager.dequeueArcUpdate();
                 if (arcUpdate != null) {
