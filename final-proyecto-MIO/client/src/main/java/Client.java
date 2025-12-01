@@ -4,10 +4,12 @@ import Demo.ConnectionPrx;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Client {
 
     public static void main(String[] args) {
+
 
         try (Communicator communicator = Util.initialize(args, "client.config")) {
 

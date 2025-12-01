@@ -14,9 +14,15 @@ public class LineInspector implements Runnable {
         this.graph = graph;
     }
 
+    long startTime;
+    long endTime;
+    long latency;
+    int count = 0;
+
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
+        startTime = System.currentTimeMillis();
 
         while (true) {
             System.out.print("\nEnter line ID to inspect (or 'q' to quit): ");
@@ -77,6 +83,7 @@ public class LineInspector implements Runnable {
         System.out.println("-------------------------------------------------------------------------------");
 
         for (int k = 0; k < stopIds.size() - 1; k++) {
+
             String stopAId = stopIds.get(k);
             String stopBId = stopIds.get(k + 1);
 
@@ -97,12 +104,22 @@ public class LineInspector implements Runnable {
                 speed = matrix[i][j];
             }
 
-            String stopAName = graph.findNameByStopId(stopAId);
-            String stopBName = graph.findNameByStopId(stopBId);
+            if(!stopAId.equals(stopBId)) {
+                String stopAName = graph.findNameByStopId(stopAId);
+                String stopBName = graph.findNameByStopId(stopBId);
+                count++;
+                System.out.printf("| %-30s | %-30s | %13.2f |%n", stopAName, stopBName, speed);
 
-            System.out.printf("| %-30s | %-30s | %13.2f |%n", stopAName, stopBName, speed);
+            }
+
         }
-
+        endTime = System.currentTimeMillis();
+        latency = (endTime-startTime) ;
+        // Considering the network, advice of the teacher
+        latency = (endTime-startTime) ;
+        latency = (endTime-startTime) ;
         System.out.println();
+        System.out.println("Latency: " + latency + "ms");
+        System.out.println("Throughput: " + ((double) count / (double)latency) + " request per ms");
     }
 }
