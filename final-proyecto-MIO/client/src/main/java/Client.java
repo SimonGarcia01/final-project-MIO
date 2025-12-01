@@ -2,47 +2,77 @@ import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.Util;
 import Demo.ConnectionPrx;
 
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Client {
+
     public static void main(String[] args) {
-        try(Communicator communicator = Util.initialize(args, "client.config")){
-            //Connecting to the server
+
+        try (Communicator communicator = Util.initialize(args, "client.config")) {
+
             ConnectionPrx serverConnection = ConnectionPrx.checkedCast(
                     communicator.propertyToProxy("serverconnection.Proxy")
             );
 
-            if(serverConnection==null){
+            if (serverConnection == null) {
                 throw new Error("No server connection!");
             }
 
             System.out.println("Connected to server!");
 
-            //Make the UI that will print the graph
+            // Create UI (initial graph)
             System.out.println("Creating the Graph.");
             UI ui = new UI();
 
-            //Give the UI 10 seconds to make its graph
-            Thread.sleep(10_000);
+            // Give UI time to generate graph (optional)
+            Thread.sleep(5_000);
 
-            //Now just get an update every 30 seconds
-            while (true) {
-                try {
-                    // Ask the server for the graph
-                    double[][] graph = serverConnection.getUpdatedGraph();
+            // Start input thread (non-blocking) - it'll read line IDs
+            Thread inputThread = new Thread(new LineInspector(ui.getGraph()));
+            inputThread.setDaemon(true);
+            inputThread.start();
 
-                    // Send to UI
-                    ui.updateMap(graph);
+            // Use a scheduled executor to poll every 30 seconds
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "graph-poller");
+                t.setDaemon(true);
+                return t;
+            });
 
-                    // Wait 30 seconds
-                    Thread.sleep(30_000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    break;
-                } catch (Exception ex) {
-                    System.out.println("Error calling server: " + ex.getMessage());
+            final AtomicBoolean inFlight = new AtomicBoolean(false);
+            final long initialDelay = 0L; // start immediately after scheduling
+            final long period = 30L; // seconds
+
+            Runnable pollTask = () -> {
+                // Ensure only one call in flight at a time
+                if (!inFlight.compareAndSet(false, true)) {
+                    // previous call still running -> skip this round
+                    System.out.println("[CLIENT] Previous update still running; skipping this poll.");
+                    return;
                 }
-            }
 
-        } catch (Exception e){
+                try {
+                    double[][] graphMatrix = serverConnection.getUpdatedGraph();
+                    ui.updateMap(graphMatrix);
+                } catch (Exception ex) {
+                    // Print once per error but do not spam
+                    System.out.println("[CLIENT] Error calling server: " + ex.getMessage());
+                } finally {
+                    inFlight.set(false);
+                }
+            };
+
+            // scheduleAtFixedRate will attempt to run every 'period', but our inFlight prevents overlap
+            scheduler.scheduleAtFixedRate(pollTask, initialDelay, period, TimeUnit.SECONDS);
+
+            // Keep main alive while the communicator runs. Wait for shutdown (same behavior as before)
+            communicator.waitForShutdown();
+
+            // shutdown scheduler if communicator finishes
+            scheduler.shutdownNow();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -28,3 +28,8 @@ public class UI {
 
 }
 
+    // Needed so the input thread can access the graph
+    public GraphImpl getGraph() {
+        return graph;
+    }
+}

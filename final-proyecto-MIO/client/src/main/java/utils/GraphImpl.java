@@ -23,7 +23,13 @@ public class GraphImpl{
     private final HashMap<String, String> lines = new HashMap<>();
     private final List<String> temporalLines = new ArrayList<>();
 
+    public SortedMap<String, List<String>> getSortedMap(){
+        return this.edges;
+    }
 
+    public double[][] getMatrix() {
+        return matrix;
+    }
 
     //Constructor
     public GraphImpl(int maxSize) {
@@ -185,6 +191,7 @@ public class GraphImpl{
         infoEdge += ", Orientación: " + orientation;
         infoEdge += ", Variante: " + variant;
         infoEdge += ", StopSequence: " + stopSequence;
+        infoEdge += ", " + stop1Id;
 
         return infoEdge;
 
