@@ -1,7 +1,7 @@
 import Demo.ArcUpdate;
 import Demo.Data;
 import Demo.Datagram;
-import utils.BusIdDate;
+import utils.StopIdDate;
 
 public class CenterController extends Thread {
 
@@ -47,9 +47,10 @@ public class CenterController extends Thread {
 
     public void produceData(Datagram datagram) {
         long start = System.nanoTime();
+        //System.out.println("[CenterController] -->" + " - " + datagram.registerDate + " - "+datagram.datagramDate);
         if(!(datagram.lineId == -1 || datagram.lineId == 999)) {
 
-            BusIdDate busIdDate  = database.getLastStop(datagram.busId);
+            StopIdDate busIdDate  = database.getLastStop(datagram.busId);
 
             if(busIdDate == null) {
                 Data data = new Data(
@@ -58,7 +59,7 @@ public class CenterController extends Thread {
                         datagram.busId,
                         datagram.latitude,
                         datagram.longitude,
-                        datagram.registerDate,
+                        datagram.datagramDate,
                         -1,
                         ""
                 );
@@ -73,7 +74,7 @@ public class CenterController extends Thread {
                         datagram.busId,
                         datagram.latitude,
                         datagram.longitude,
-                        datagram.registerDate,
+                        datagram.datagramDate,
                         -1,
                         ""
                 );
@@ -85,7 +86,7 @@ public class CenterController extends Thread {
         }
 
         long end = System.nanoTime();
-        System.out.println("[CenterController.produceData] Processing Time: " + (end - start) / 1000000.0 + "ms");
+        //System.out.println("[CenterController.produceData] Processing Time: " + (end - start) / 1000000.0 + "ms");
     }
 
     private Data transformDatagram(Datagram datagram) {
@@ -96,13 +97,13 @@ public class CenterController extends Thread {
         data.busId = datagram.busId;
         data.latitude = datagram.latitude;
         data.longitude = datagram.longitude;
-        data.date = datagram.registerDate;
+        data.date = datagram.datagramDate;
 
         //Get the info of the stop before
-        BusIdDate busIdDate = database.getLastStop(datagram.busId);
-        if(busIdDate != null) {
-            data.prevStopId = busIdDate.busId;
-            data.prevStopTime = busIdDate.date;
+        StopIdDate stopIdDate = database.getLastStop(datagram.busId);
+        if(stopIdDate != null) {
+            data.prevStopId = stopIdDate.stopId;
+            data.prevStopTime = stopIdDate.date;
         }
 
         return data;
@@ -112,9 +113,8 @@ public class CenterController extends Thread {
     //Consume Arc
     private void handleArcUpdate(ArcUpdate arcUpdate) {
         long start = System.nanoTime();
-        //ArcUpdate arcUpdate = queueManager.dequeueArc Update(); Esta linea no se usa por. arcUpdate se pide como parametro
         if (arcUpdate.averageSpeed != -1) {
-            System.out.println("[CenterController.handleArcUpdate] Processing ARC UPDATE");
+            //System.out.println("[CenterController.handleArcUpdate] Processing ARC UPDATE");
             database.updateArc(arcUpdate.stopMatrixId1, arcUpdate.stopMatrixId2, arcUpdate.averageSpeed, arcUpdate.bus);
         }
 
@@ -122,7 +122,7 @@ public class CenterController extends Thread {
             System.out.println("[CenterController.handleArcUpdate] Skip.");
         }
         long end = System.nanoTime();
-        System.out.println("[CenterController.handleArcUpdate] Processing Time: " + (end - start) / 1000000.0 + "ms");
+        //System.out.println("[CenterController.handleArcUpdate] Processing Time: " + (end - start) / 1000000.0 + "ms");
     }
 
     public void setConnection(ConnectionImpl connection) {

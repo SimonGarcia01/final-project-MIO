@@ -25,8 +25,8 @@ public class DatagramReader {
                 d.registerDate   = data[1];
                 d.stopId         = Integer.parseInt(data[2]);
                 d.odometer       = Integer.parseInt(data[3]);
-                d.latitude       = Double.parseDouble(data[4]) / 1_000_000d;
-                d.longitude      = Double.parseDouble(data[5]) / 1_000_000d;
+                d.latitude       = Double.parseDouble(data[4]) / 10_000_000d;
+                d.longitude      = Double.parseDouble(data[5]) / 10_000_000d;
                 d.taskId         = Integer.parseInt(data[6]);
                 d.lineId         = Integer.parseInt(data[7]);
                 d.tripId         = Integer.parseInt(data[8]);

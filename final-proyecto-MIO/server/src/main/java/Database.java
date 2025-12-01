@@ -1,5 +1,5 @@
 import Demo.BusUpdate;
-import utils.BusIdDate;
+import utils.StopIdDate;
 import utils.GraphCreation;
 import utils.GraphImpl;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Database {
     // Para registrar por qué paradas ha ido pasando cada bus
-    private static final Map<Integer, Deque<BusIdDate>> stopsByBus = new HashMap<>();
+    private static final Map<Integer, Deque<StopIdDate>> stopsByBus = new HashMap<>();
 
 
     // Grafo inmutable
@@ -21,15 +21,23 @@ public class Database {
         System.out.println("[Database] Database created successfully.");
     }
 
-    public void addStop(int busId, int stopId, int lineId, String date) {
+    public void addStop(int busId, int stopId, int lineId, String timestamp) {
+        if (stopId < 0) {
+            System.out.println("[DATABASE] Ignored invalid stopId=" + stopId + " for bus=" + busId);
+            return;
+        }
+
         stopsByBus
                 .computeIfAbsent(busId, id -> new ArrayDeque<>())
-                .addLast(new BusIdDate(stopId, date, lineId));
+                .addLast(new StopIdDate(stopId, timestamp, lineId));
+
+        System.out.println("DATABASE ADD STOP " + busId + " " + stopId + " " + lineId + " " + timestamp);
     }
 
-    public BusIdDate getLastStop(int busId) {
-        Deque<BusIdDate> q = stopsByBus.get(busId);
-        return (q == null || q.isEmpty()) ? null : q.getLast();
+    public StopIdDate getLastStop(int busId) {
+        Deque<StopIdDate> q = stopsByBus.get(busId);
+        if (q == null || q.isEmpty()) return null;
+        return q.getLast();
     }
 
     public double[][] returnGraph(){
@@ -38,19 +46,36 @@ public class Database {
 
     public void updateArc(int matrixStopId1, int matrixStopId2, double newAverageSpeed, BusUpdate busUpdate) {
 
-        if(matrixStopId1 == -1 || matrixStopId2 == -1 || newAverageSpeed == -2.0) {
-
-            addStop(busUpdate.busId, busUpdate.stopId, busUpdate.lineId, busUpdate.timestamp);
+        if (busUpdate.stopId < 0) {
+            System.out.println("[DATABASE] Ignoring update with stopId=-1");
+            return;
         }
-        else {
-            addStop(matrixStopId1,matrixStopId2, busUpdate.lineId, busUpdate.timestamp);
-            int averageCounter = graph.getAverageCounter(matrixStopId1,matrixStopId2);
-            double oldAvg = graph.getAverageSpeed(matrixStopId1,matrixStopId2);
 
-            double updatedAvg = (oldAvg * averageCounter + newAverageSpeed) / (averageCounter + 1);
 
-            graph.updateAverageSpeed(matrixStopId1,matrixStopId2,updatedAvg);
+        StopIdDate last = getLastStop(busUpdate.busId);
+
+        if (last == null || last.stopId != busUpdate.stopId) {
+            addStop(
+                    busUpdate.busId,
+                    busUpdate.stopId,
+                    busUpdate.lineId,
+                    busUpdate.timestamp
+            );
         }
+
+        if (matrixStopId1 == -1 && matrixStopId2 == -1 && newAverageSpeed == -2.0) {
+            System.out.println("[DATABASE] Position update only, no speed update.");
+            return;
+        }
+
+        int count = graph.getAverageCounter(matrixStopId1, matrixStopId2);
+        double oldAvg = graph.getAverageSpeed(matrixStopId1, matrixStopId2);
+
+        double updatedAvg = (oldAvg * count + newAverageSpeed) / (count + 1);
+
+        graph.updateAverageSpeed(matrixStopId1, matrixStopId2, updatedAvg);
+
+        System.out.println("[DATABASE] Updated avg speed: " + updatedAvg);
 
     }
 

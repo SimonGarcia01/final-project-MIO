@@ -18,34 +18,59 @@ public class EstimatorConsumer {
 
     public ArcUpdate estimateArcUpdate(Data data) {
 
-        if(data.prevStopId != -1 && !data.prevStopTime.isEmpty()) {
+        System.out.println("[ESTIMATOR CONSUMER]--> " + data.date + " " + data.prevStopTime +
+                " " + data.lineId + " " + data.busId + " " + data.prevStopId + " " +
+                data.latitude + " " + data.longitude);
 
-            Vertex previousVertex = graph.findVertexByStopId(String.valueOf(data.prevStopId));
-            Vertex nextVertex = graph.findVertexByStopId(graph.getNextStop(String.valueOf(data.lineId), previousVertex.getStopId()));
+        // -----------------------------
+        // Case 1: We know previous stop
+        // -----------------------------
+        if (data.prevStopId != -1 && !data.prevStopTime.isEmpty()) {
 
-            double prevLat = previousVertex.getY();
-            double prevLon = previousVertex.getX();
+            Vertex previousVertex =
+                    graph.findVertexByStopId(String.valueOf(data.prevStopId));
+
+            Vertex nextVertex =
+                    graph.findVertexByStopId(graph.getNextStop(
+                            String.valueOf(data.lineId),
+                            previousVertex.getStopId()
+                    ));
+
             double nextLat = nextVertex.getY();
             double nextLon = nextVertex.getX();
 
-            double distance = distanceKm(prevLat, prevLon, nextLat, nextLon);
+            double distance = distanceKm(data.latitude, data.longitude, nextLat, nextLon);
 
             int stopMatrixId1 = -1;
             int stopMatrixId2 = -1;
-            double averageSpeed = -1;
+            double averageSpeed = -1.0;
 
-            //Check if the bus is less than 50 meters away from the next stop
-            if(distance < 0.05){
-                LocalDateTime time2 = parseTime(data.date);
-                LocalDateTime time1 = parseTime(data.prevStopTime);
+            // Only update when bus is close to the next stop
+            if (distance < 0.120) {  // 120 m
 
-                // Time difference in seconds
-                long seconds = Duration.between(time1, time2).getSeconds();
+                LocalDateTime t2 = parseTime(data.date);
+                LocalDateTime t1 = parseTime(data.prevStopTime);
 
-                // Convert seconds → hours
+                long seconds = Duration.between(t1, t2).getSeconds();
+
+                // Protect from invalid time
+                if (seconds <= 0) {
+
+                    BusUpdate busUpdate = new BusUpdate(
+                            data.orientation,
+                            data.lineId,
+                            Integer.parseInt(nextVertex.getStopId()),
+                            data.busId,
+                            data.date
+                    );
+
+                    return new ArcUpdate(-1, -1, -2.0, busUpdate);
+                }
+
                 double hours = seconds / 3600.0;
 
-                // Now compute speed
+                if (hours <= 0) hours = 0.0001; // Avoid division by zero
+
                 averageSpeed = distance / hours;
 
                 stopMatrixId1 = graph.findStopIndexById(previousVertex.getStopId());
@@ -55,9 +80,10 @@ public class EstimatorConsumer {
             BusUpdate busUpdate = new BusUpdate(
                     data.orientation,
                     data.lineId,
+                    Integer.parseInt(nextVertex.getStopId()),
                     data.busId,
-                    1,
-                    data.date);
+                    data.date
+            );
 
             return new ArcUpdate(
                     stopMatrixId1,
@@ -66,45 +92,39 @@ public class EstimatorConsumer {
                     busUpdate
             );
         }
-        else {
 
-            int nearestStopid = -1;
+        // ---------------------------------------
+        // Case 2: No previous stop → estimate nearest
+        // ---------------------------------------
+        double minDistance = 5000.0;
+        Vertex nearest = null;
 
-            for(Vertex v : graph.findEdgesByLineId(String.valueOf(data.lineId))) {
-
-                double prevLat = v.getY();
-                double prevLon = v.getX();
-                double nextLat = data.latitude;
-                double nextLon = data.longitude;
-
-                double distance = distanceKm(prevLat, prevLon, nextLat, nextLon);
-
-                if(distance < 0.05){
-                    nearestStopid = Integer.parseInt(v.getStopId());
-                    break;
-                }
-
+        for (Vertex v : graph.findEdgesByLineId(String.valueOf(data.lineId))) {
+            double dist = distanceKm(v.getY(), v.getX(), data.latitude, data.longitude);
+            if (dist < minDistance) {
+                minDistance = dist;
+                nearest = v;
             }
-
-            BusUpdate busUpdate = new BusUpdate(
-                    data.orientation,
-                    data.lineId,
-                    nearestStopid,
-                    data.busId,
-                    data.date);
-
-            return new ArcUpdate(
-                    -1,
-                    -1,
-                    -2.0,
-                    busUpdate
-            );
         }
 
+        int nearestStopId = -1;
+        if (nearest != null && minDistance < 0.120) {
+            nearestStopId = Integer.parseInt(nearest.getStopId());
+        }
+
+        BusUpdate busUpdate = new BusUpdate(
+                data.orientation,
+                data.lineId,
+                nearestStopId,
+                data.busId,
+                data.date
+        );
+
+        return new ArcUpdate(-1, -1, -2.0, busUpdate);
     }
 
     public LocalDateTime parseTime(String time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.parse(time, formatter);
     }
 

@@ -22,7 +22,7 @@ public class Estimator {
         this.workerPool = Executors.newFixedThreadPool(threads);
         this.graph = GraphCreation.getGraph();
         this.consumer = ThreadLocal.withInitial(() -> new EstimatorConsumer(graph));
-        System.out.println("[Estimator] The graph was created successfully.");
+        //System.out.println("[Estimator] The graph was created successfully.");
     }
 
     //Main method with server connection and estimator creation
@@ -50,7 +50,7 @@ public class Estimator {
     }
 
     public void start() {
-        System.out.println("[Estiamtor] Estimator started. Waiting for Data...");
+        System.out.println("[Estimator] Estimator started. Waiting for Data...");
 
         while (true) {
             try {
@@ -59,7 +59,7 @@ public class Estimator {
 
                 //If there is no data, retry
                 if (data == null) {
-                    System.out.println("[Estimator] No data received. Retrying...");
+                    //System.out.println("[Estimator] No data received. Retrying...");
                     continue;
                 }
 
@@ -82,10 +82,10 @@ public class Estimator {
             //Sending results to server
             serverConnection.receiveArcUpdate(update);
 
-            System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
+            //System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
 
             long end = System.nanoTime();
-            System.out.println("[Estimator] processing time: " + (end - start) / 1000000.0 + "ms");
+            //System.out.println("[Estimator] processing time: " + (end - start) / 1000000.0 + "ms");
 
         } catch (Exception e) {
             e.printStackTrace();
