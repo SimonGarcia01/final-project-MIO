@@ -21,7 +21,9 @@ public class Estimator {
     //--DEBUGIN VARIABLES--
     private final AtomicLong totalProcessingTimeNs = new AtomicLong(0);
     private final AtomicLong processedCount = new AtomicLong(0);
-    private volatile long lastPrint = System.currentTimeMillis();
+    private boolean reportPrinted = false;
+    private int emptyCounter = 0;
+    private final int emptyThreshold = 50;
 
     //Defines an estimato with a worker/consumer pool
     public Estimator(ConnectionPrx serverConnection, int threads) {
@@ -66,12 +68,17 @@ public class Estimator {
 
                 //If there is no data, retry
                 if (data == null) {
+                    emptyCounter++; //DEBUGIN
+                    if (emptyCounter >= emptyThreshold && !reportPrinted) { //DEBUGIN
+                        printTemporaryReport(); //DEBUGIN
+                        reportPrinted = true; //DEBUGIN
+                    }
+                    Thread.sleep(20);
                     System.out.println("[Estimator] No data received. Retrying...");
                     continue;
                 }
-                else {
-                    System.out.println("[Estimator] Data received!");
-                }
+                emptyCounter = 0;
+                reportPrinted = false;
 
                 //Sending data to thread pool
                 workerPool.submit(() -> processData(data));
@@ -93,26 +100,22 @@ public class Estimator {
             //Sending results to server
             serverConnection.receiveArcUpdate(update);
 
-            //DEBUGIN
-            long end = System.nanoTime();
-            long duration = end - start;
-            //System.out.println("[Estimator] processed by thread " + Thread.currentThread().getName());
-            //System.out.println("[Estimator] processing time: " + (end - start) / 1000000.0 + "ms");
-            totalProcessingTimeNs.addAndGet(duration);
-            long count = processedCount.incrementAndGet();
-            long now = System.currentTimeMillis();
-            if (now - lastPrint >= 10_000) {
-                long totalMs = totalProcessingTimeNs.get() / 1_000_000;
-                System.out.println("[Estimator] ----- REPORT (10s) -----");
-                System.out.println("[Estimator] Processed Data: " + count);
-                System.out.println("[Estimator] Acumulated Time: " + totalMs + " ms");
-                System.out.println("-----------------------------------------");
-
-                lastPrint = now;
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //DEBUGIN
+    private void printTemporaryReport() {
+        long count = processedCount.get();
+        long totalMs = totalProcessingTimeNs.get() / 1_000_000;
+
+        System.out.println("\n===== TEMPORARY REPORT =====");
+        System.out.println("Processed Data so far: " + count);
+        System.out.println("Accumulated Processing Time: " + totalMs + " ms");
+        if (count > 0) {
+            System.out.println("Average Time per Data: " + (totalMs / (double) count) + " ms");
+        }
+        System.out.println("============================\n");
     }
 }
