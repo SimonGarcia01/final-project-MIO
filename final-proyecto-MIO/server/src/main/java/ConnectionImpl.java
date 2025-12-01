@@ -19,6 +19,7 @@ public class ConnectionImpl implements Connection {
     @Override
     public double[][] getUpdatedGraph(Current current) {
         System.out.println("Graph requested");
+        System.out.println("Graph requested at " + System.currentTimeMillis());
         return database.returnGraph();
     }
 

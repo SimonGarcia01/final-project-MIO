@@ -191,6 +191,7 @@ public class GraphImpl{
         infoEdge += ", Orientación: " + orientation;
         infoEdge += ", Variante: " + variant;
         infoEdge += ", StopSequence: " + stopSequence;
+        infoEdge += ", " + stop1Id;
 
         return infoEdge;
 

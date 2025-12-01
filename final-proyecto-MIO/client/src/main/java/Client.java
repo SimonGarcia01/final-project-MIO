@@ -22,28 +22,30 @@ public class Client {
             System.out.println("Creating the Graph.");
             UI ui = new UI();
 
-            // Start input thread (non-blocking)
-            Thread inputThread = new Thread(new LineInspector(ui.getGraph()));
-            inputThread.setDaemon(true); // won't prevent program from closing
-            inputThread.start();
-
             // Give UI time to generate graph
             Thread.sleep(5_000);
 
-            // Update loop every 30 sec
+            // Start input thread (non-blocking) - it'll read line IDs
+            Thread inputThread = new Thread(new LineInspector(ui.getGraph()));
+            inputThread.start();
+
+            // Update loop every 30 seconds
             while (true) {
                 try {
+                    // call server (no pre-request logging)
                     double[][] graphMatrix = serverConnection.getUpdatedGraph();
 
-                    // Send new matrix to UI
+                    // Send new matrix to UI (UI prints single "received" message)
                     ui.updateMap(graphMatrix);
 
-                    Thread.sleep(30_000); // wait 30 seconds
+                    // sleep exactly 30 seconds between requests
+                    Thread.sleep(30_000);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     break;
                 } catch (Exception ex) {
+                    // print error but do not spam
                     System.out.println("Error calling server: " + ex.getMessage());
                 }
             }

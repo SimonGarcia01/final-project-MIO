@@ -27,7 +27,7 @@ public class Server {
 
             adapter.add(serverConnection, Util.stringToIdentity("serverconnection"));
 
-            System.out.println("serverconnection - port 1090");
+            System.out.println("serverconnection - port 9090");
 
             adapter.activate();
 
